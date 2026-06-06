@@ -840,8 +840,27 @@ const ADMIN_PASS='admin123';
 function toggleAdminEntry(){const el=document.getElementById('adminEntry');el.style.display=el.style.display==='none'?'':'none';if(el.style.display!=='none')document.getElementById('adminPassInput').focus();}
 function doAdminLogin(){const p=document.getElementById('adminPassInput').value;const e=document.getElementById('adminErr');if(!p){e.textContent='הכנס סיסמה';return;}if(p===ADMIN_PASS){e.textContent='';document.getElementById('adminPassInput').value='';document.getElementById('adminEntry').style.display='none';setCur('__admin__');enterAdminMode();}else{e.textContent='סיסמה שגויה';}}
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('adminEntry')&&document.getElementById('adminEntry').style.display!=='none'&&document.activeElement===document.getElementById('adminPassInput'))doAdminLogin();});
-function doLogin(){const u=document.getElementById('loginUser').value.trim().toLowerCase();const p=document.getElementById('loginPass').value;const e=document.getElementById('loginErr');if(!u||!p){e.textContent='מלא את כל השדות';return;}const us=getUsers();if(!us[u]){e.textContent='שם משתמש לא קיים';return;}if(us[u].pass!==btoa(p)){e.textContent='סיסמה שגויה';return;}setCur(u);enterApp();}
-function doRegister(){const n=document.getElementById('regName').value.trim();const u=document.getElementById('regUser').value.trim().toLowerCase().replace(/\s+/g,'');const cl=document.getElementById('regClass').value;const p=document.getElementById('regPass').value;const e=document.getElementById('regErr');if(!n||!u||!cl||!p){e.textContent='מלא את כל השדות';return;}if(p.length<4){e.textContent='סיסמה קצרה מדי';return;}const us=getUsers();if(us[u]){e.textContent='שם משתמש תפוס';return;}us[u]={name:n,cls:cl,pass:btoa(p),totalPts:0,days:{},tasksCompleted:0,activeDays:0,streak:0,lastDay:''};saveUsers(us);setCur(u);enterApp();}
+function doLogin(){const u=document.getElementById('loginUser').value.trim().toLowerCase();const p=document.getElementById('loginPass').value;const e=document.getElementById('loginErr');if(!u||!p){e.textContent='מלא את כל השדות';return;}const us=getUsers();if(!us[u]){e.textContent='שם משתמש לא קיים';return;}if(!chkPass(p,us[u].pass)){e.textContent='סיסמה שגויה';return;}setCur(u);enterApp();}
+function encPass(p){try{return btoa(unescape(encodeURIComponent(p)));}catch(e){return btoa(p.split('').map(c=>c.charCodeAt(0)<128?c:'?').join(''));}}
+function chkPass(p,hash){try{return encPass(p)===hash;}catch(e){return false;}}
+function doRegister(){
+  const n=document.getElementById('regName').value.trim();
+  const u=document.getElementById('regUser').value.trim().toLowerCase().replace(/\s+/g,'');
+  const cl=document.getElementById('regClass').value;
+  const p=document.getElementById('regPass').value;
+  const e=document.getElementById('regErr');
+  e.textContent='';
+  if(!n||!u||!cl||!p){e.textContent='מלא את כל השדות';return;}
+  if(p.length<4){e.textContent='סיסמה קצרה מדי';return;}
+  const us=getUsers();
+  if(us[u]){e.textContent='שם משתמש תפוס';return;}
+  try{
+    us[u]={name:n,cls:cl,pass:encPass(p),totalPts:0,days:{},tasksCompleted:0,activeDays:0,streak:0,lastDay:''};
+    saveUsers(us);
+    setCur(u);
+    enterApp();
+  }catch(err){e.textContent='שגיאה: '+err.message;}
+}
 // doLogout defined in admin section below
 function enterApp(){document.getElementById('authScreen').classList.remove('active');document.getElementById('mainScreen').classList.add('active');showPage('home');}
 window.onload=function(){const c=cur();if(c==='__admin__')enterAdminMode();else if(c&&getUD(c))enterApp();};
