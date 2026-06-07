@@ -1343,6 +1343,38 @@ function doLogout(){
   document.getElementById('authScreen').classList.add('active');
 }
 
+// ── Admin: manage students ──
+function adminAddPts(un, pts){
+  const u=getUD(un);if(!u)return;
+  u.totalPts=Math.max(0,(u.totalPts||0)+pts);
+  saveUD(un,u);
+  showToast(`${pts>0?'+':''}${pts} נקודות ל${u.name}`,'pts');
+  renderAdmin();
+}
+
+function adminCustomPts(un){
+  const u=getUD(un);if(!u)return;
+  const val=prompt(`${u.name} — נוכחי: ${u.totalPts} נק'\nהכנס מספר (חיובי להוספה, שלילי להפחתה):`);
+  if(val===null)return;
+  const n=parseInt(val);
+  if(isNaN(n)){alert('מספר לא תקין');return;}
+  u.totalPts=Math.max(0,(u.totalPts||0)+n);
+  saveUD(un,u);
+  showToast(`${n>0?'+':''}${n} נקודות ל${u.name}`,'pts');
+  renderAdmin();
+}
+
+function adminRemoveStudent(un, name){
+  if(!confirm(`האם למחוק את ${name}?\nפעולה זו לא ניתנת לביטול.`))return;
+  const users=getUsers();
+  delete users[un];
+  saveUsers(users);
+  // מחק גם מ-Firebase
+  if(FB_URL)fetch(`${FB_URL}/ak_users/${un}.json`,{method:'DELETE'}).catch(()=>{});
+  showToast(`${name} הוסר`,'warn');
+  renderAdmin();
+}
+
 function promptFbUrl(){
   const url=prompt('הכנס את כתובת Firebase Realtime Database שלך:\n(דוגמה: https://my-project-default-rtdb.firebaseio.com)');
   if(url&&url.startsWith('https://')){
@@ -1412,8 +1444,8 @@ function renderAdmin(){
         </div>`;
 
       html+=`
-        <div class="student-card ${posClass}" onclick="toggleStudentDetail('sd_${i}')">
-          <div class="sc-main">
+        <div class="student-card ${posClass}">
+          <div class="sc-main" onclick="toggleStudentDetail('sd_${i}')">
             <div class="sc-pos">${medal}</div>
             <div class="sc-avatar" style="background:linear-gradient(135deg,${avatarColor},${avatarColor}99)">${s.name[0]}</div>
             <div class="sc-info">
@@ -1431,6 +1463,12 @@ function renderAdmin(){
               <div class="sc-tasks">סה"כ נק'</div>
               <div style="font-size:18px;margin-top:2px;color:var(--muted)">▾</div>
             </div>
+          </div>
+          <div style="display:flex;gap:6px;padding:8px 14px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.15);" onclick="event.stopPropagation()">
+            <button onclick="adminAddPts('${s.un}',10)" style="flex:1;padding:6px;border-radius:7px;border:none;background:rgba(107,255,184,0.15);color:#6bffb8;font-size:13px;font-weight:700;cursor:pointer;">+10 נק'</button>
+            <button onclick="adminAddPts('${s.un}',50)" style="flex:1;padding:6px;border-radius:7px;border:none;background:rgba(107,255,184,0.1);color:#6bffb8;font-size:13px;font-weight:700;cursor:pointer;">+50 נק'</button>
+            <button onclick="adminCustomPts('${s.un}')" style="flex:1;padding:6px;border-radius:7px;border:none;background:rgba(247,201,72,0.15);color:#f7c948;font-size:13px;font-weight:700;cursor:pointer;">± מותאם</button>
+            <button onclick="adminRemoveStudent('${s.un}','${s.name}')" style="flex:1;padding:6px;border-radius:7px;border:none;background:rgba(255,107,107,0.15);color:#ff6b6b;font-size:13px;font-weight:700;cursor:pointer;">🗑 הסר</button>
           </div>
           <div class="sc-detail" id="sd_${i}">${taskRows}</div>
         </div>`;
