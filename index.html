@@ -1021,7 +1021,7 @@ function openLearnModal(type,tid,pts,subject){
     badge='📜';badgeText='5 משניות + שאלת הבנה';
     document.getElementById('mTitle').textContent=set.title;
     const mishnaText=set.idx.map((i,n)=>{const m=MISH[i%MISH.length];return`משנה ${n+1}: ${m.t}`;}).join(' ');
-    body=`<button onclick="speakText(${JSON.stringify(mishnaText)})" style="display:flex;align-items:center;gap:6px;background:rgba(107,255,184,0.1);border:1.5px solid rgba(107,255,184,0.3);border-radius:10px;color:#6bffb8;font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer;margin-bottom:10px;font-family:inherit;" id="speakBtn">🔊 האזן לכל המשניות</button>`;
+    body=``;
     body+=set.idx.map((i,n)=>{const m=MISH[i%MISH.length];return`<div class="mishna-card"><div class="mishna-num">משנה ${n+1} · ${m.r}</div><div class="mishna-text">${m.t}</div><div class="mishna-summary">💡 ${m.s}</div></div>`;}).join('');
     body+=buildQuestion(set.q,set.a,set.c,pts,set.timer||90);
 
@@ -1030,7 +1030,7 @@ function openLearnModal(type,tid,pts,subject){
     badge='⚖️';badgeText='הלכה יומית + שאלת הבנה';
     document.getElementById('mTitle').textContent=h.t;
     const halachaText=h.tx.replace(/\n/g,' ');
-    body=`<button onclick="speakText(${JSON.stringify(halachaText)})" style="display:flex;align-items:center;gap:6px;background:rgba(0,180,216,0.1);border:1.5px solid rgba(0,180,216,0.3);border-radius:10px;color:#00b4d8;font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer;margin-bottom:10px;font-family:inherit;" id="speakBtn">🔊 האזן להלכה</button>`;
+    body=``;
     body+=`<div class="modal-text">${h.tx.replace(/\n/g,'<br>')}</div><div class="modal-summary">📌 ${h.s}</div>`;
     body+=buildQuestion(h.q,h.a,h.c,pts,h.timer||60);
 
@@ -1042,7 +1042,7 @@ function openLearnModal(type,tid,pts,subject){
     document.getElementById('mTitle').textContent=entry.title;
     const plainText=entry.tx.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
     body=`<div class="modal-text" style="font-size:14px;line-height:1.9">${entry.tx}</div>
-    <button onclick="speakText(${JSON.stringify(plainText)})" style="display:flex;align-items:center;gap:6px;background:rgba(0,180,216,0.12);border:1.5px solid rgba(0,180,216,0.3);border-radius:10px;color:#00b4d8;font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer;margin-bottom:10px;font-family:inherit;" id="speakBtn">🔊 האזן לתוכן</button>`;
+    `;
     body+=buildQuestion(entry.q,entry.a,entry.c,pts,entry.timer||60);
 
   }else if(type==='pasuk'){
@@ -1055,7 +1055,6 @@ function openLearnModal(type,tid,pts,subject){
     const hidden=words.slice(-3).join(' ');
     body=`
       <div class="modal-text" style="font-size:17px;line-height:2.1;text-align:center;font-weight:600">${psk.text}</div>
-      <button onclick="speakText(${JSON.stringify(psk.text)})" style="display:flex;align-items:center;gap:6px;background:rgba(107,255,184,0.1);border:1.5px solid rgba(107,255,184,0.3);border-radius:10px;color:#6bffb8;font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer;margin:8px 0;font-family:inherit;">🔊 האזן לפסוק</button>
       <div class="question-box" style="margin-top:12px">
         <div class="question-label">📝 השלם את הפסוק</div>
         <div style="font-size:15px;font-weight:700;line-height:2;margin-bottom:12px;color:var(--text)">${visible} <span style="color:var(--muted);font-style:italic">... (השלם 3 מילים אחרונות)</span></div>
