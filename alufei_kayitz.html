@@ -898,7 +898,7 @@ function renderHome(){
   document.getElementById('rankIcon').textContent=rk.icon;
   document.getElementById('rankName').textContent=rk.name;
   const nx=nextRank(u.totalPts||0);
-  document.getElementById('rankNext').textContent=nx?`עוד ${nx.min-(u.totalPts||0)} נק׳ ל${nx.name}`:'הגעת לדרגה הגבוהה! 🎉';
+  document.getElementById('rankNext').textContent=nx?`עוד ${nx.min-(u.totalPts||0)} נק׳ ל${nx.name}`:'הגעת לדרגה הגבוהה ביותר! 🎉';
   // bonus
   const bc=document.getElementById('bonusCard');
   if(dd.bonusDone){bc.className='bonus-card done-bonus';bc.innerHTML=`<div style="font-size:20px">✅</div><div style="flex:1"><div style="font-weight:800;font-size:13px;color:var(--muted)">בונוס הושלם!</div><div style="font-size:11px;color:var(--muted)">${bonus.desc}</div></div>`;bc.onclick=null;}
@@ -1112,7 +1112,7 @@ function buildQuestion(q,answers,correct,fullPts,timerSecs){
           stroke-dasharray="163" stroke-dashoffset="0" transform="rotate(-90 34 34)" style="transition:stroke-dashoffset 1s linear;"/>
         <text id="timerNum" x="34" y="39" text-anchor="middle" fill="#f7c948" font-size="16" font-weight="900" font-family="Segoe UI,Arial">${timerSecs}</text>
       </svg>
-      <div class="timer-msg">קרא תחילה... ניתן לענות בעוד <span id="timerNum2">${timerSecs}</span> שניות</div>
+      <div class="timer-msg">קרא את החומר תחילה... תוכל לענות בעוד <span id="timerNum2">${timerSecs}</span> שניות</div>
     </div>
     <div id="qAnswers" style="display:none">${btns}</div>
     <div id="answerResult" style="display:none" class="answer-result"></div>
@@ -1148,11 +1148,11 @@ function selectAnswer(chosen,correct,fullPts){
   if(chosen===correct){
     _lpts=fullPts;
     res.className='answer-result ok';
-    res.textContent=`✅ נכון מאוד! קיבלת ${fullPts} נקודות מלאות!`;
+    res.textContent=`✅ נכון מאוד! קיבלת ${fullPts} נקודות!`;
   }else{
     _lpts=5;
     res.className='answer-result nok';
-    res.textContent=`❌ לא נכון – התשובה הנכונה מסומנת בירוק. קיבלת 5 נקודות על הקריאה.`;
+    res.textContent=`❌ לא נכון – התשובה הנכונה מסומנת בירוק. קיבלת 5 נקודות על הלימוד.`;
   }
   document.getElementById('mConfirm').style.display='';
 }
@@ -1170,23 +1170,40 @@ function confirmLearn(){
 }
 
 // ── Speak ──
+function cleanForSpeech(text){
+  // הסר תגי HTML, תווים מיוחדים וקוד
+  return text
+    .replace(/<[^>]+>/g,' ')       // הסר תגי HTML
+    .replace(/&[^;]+;/g,' ')       // הסר HTML entities
+    .replace(/\*\*|__|\*|_/g,' ')  // הסר markdown
+    .replace(/https?:\/\/\S+/g,'') // הסר קישורים
+    .replace(/[{}()[\]<>]/g,' ')   // הסר סוגריים
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
 function speakText(text){
   if(!window.speechSynthesis){alert('הדפדפן שלך לא תומך בהשמעת קול');return;}
-  window.speechSynthesis.cancel();
+  // אם כבר מנגן — עצור
+  if(window.speechSynthesis.speaking||window.speechSynthesis.pending){
+    window.speechSynthesis.cancel();
+    document.querySelectorAll('#speakBtn').forEach(b=>{b.textContent='🔊 האזן';b.style.background='rgba(0,180,216,0.1)';});
+    return;
+  }
+  const cleanedText=cleanForSpeech(text);
   function doSpeak(){
-    const utt=new SpeechSynthesisUtterance(text);
+    const utt=new SpeechSynthesisUtterance(cleanedText);
     utt.lang='he-IL';utt.rate=0.82;utt.pitch=1;
     const voices=window.speechSynthesis.getVoices();
     const heb=voices.find(v=>v.lang&&v.lang.startsWith('he'))
-              ||voices.find(v=>v.lang&&v.lang.startsWith('ar')) // Arabic as fallback (Semitic)
+              ||voices.find(v=>v.lang&&v.lang.startsWith('ar'))
               ||voices[0];
     if(heb)utt.voice=heb;
-    utt.onstart=()=>{const b=document.getElementById('speakBtn');if(b)b.textContent='🔊 מנגן...';};
-    utt.onend=()=>{const b=document.getElementById('speakBtn');if(b)b.textContent='🔊 האזן';};
-    utt.onerror=()=>{const b=document.getElementById('speakBtn');if(b)b.textContent='🔊 האזן';};
+    utt.onstart=()=>{document.querySelectorAll('#speakBtn').forEach(b=>{b.textContent='⏹ עצור';b.style.background='rgba(255,107,107,0.15)';});};
+    utt.onend=()=>{document.querySelectorAll('#speakBtn').forEach(b=>{b.textContent='🔊 האזן';b.style.background='rgba(0,180,216,0.1)';});};
+    utt.onerror=()=>{document.querySelectorAll('#speakBtn').forEach(b=>{b.textContent='🔊 האזן';b.style.background='rgba(0,180,216,0.1)';});};
     window.speechSynthesis.speak(utt);
   }
-  // Voices may not be loaded yet – wait if needed
   if(window.speechSynthesis.getVoices().length>0){doSpeak();}
   else{window.speechSynthesis.onvoiceschanged=()=>{window.speechSynthesis.onvoiceschanged=null;doSpeak();};}
 }
