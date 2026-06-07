@@ -6,16 +6,16 @@
 <title>אלופי הקיץ 🏆</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{--gold:#f7c948;--orange:#ff8c42;--teal:#00b4d8;--green:#6bffb8;--bg1:#0a0e1a;--card:rgba(255,255,255,0.06);--border:rgba(255,255,255,0.1);--text:rgba(255,255,255,0.85);--muted:rgba(255,255,255,0.4);}
+:root{--gold:#c8860a;--orange:#e06010;--teal:#0077aa;--green:#1a9a60;--bg1:#f0ede6;--card:rgba(255,255,255,0.75);--border:rgba(100,80,40,0.18);--text:#2a1f0a;--muted:rgba(60,40,10,0.5);}
 html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg1);color:var(--text);overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background:url('logo.webp') center center no-repeat;background-size:340px;opacity:0.18;pointer-events:none;z-index:0;}
+body::before{content:'';position:fixed;inset:0;background:url('logo.webp') center center no-repeat;background-size:cover;opacity:0.12;pointer-events:none;z-index:0;}
 .screen,.modal-overlay,#rankUp{position:relative;z-index:1;}
 .screen{display:none;flex-direction:column;min-height:100vh;overflow-y:auto;}
 .screen.active{display:flex;}
 
 /* AUTH */
-#authScreen{align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0e1a,#111827,#0f2a4a);padding:20px;}
-.auth-box{background:rgba(255,255,255,0.07);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;padding:38px 28px;width:100%;max-width:380px;text-align:center;}
+#authScreen{align-items:center;justify-content:center;background:transparent;padding:20px;}
+.auth-box{background:rgba(255,255,255,0.88);backdrop-filter:blur(20px);border:1px solid rgba(180,140,60,0.3);border-radius:24px;padding:38px 28px;width:100%;max-width:380px;text-align:center;box-shadow:0 8px 40px rgba(100,70,20,0.15);}
 .app-logo{font-size:52px;margin-bottom:8px;animation:float 2s infinite alternate;}
 @keyframes float{from{transform:translateY(0);}to{transform:translateY(-9px);}}
 .app-title{font-size:26px;font-weight:900;background:linear-gradient(90deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:3px;}
@@ -36,16 +36,16 @@ body::before{content:'';position:fixed;inset:0;background:url('logo.webp') cente
 .mt8{margin-top:8px;}
 
 /* TOP BAR */
-.top-bar{background:rgba(10,14,26,0.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.top-bar{background:rgba(255,250,240,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(180,140,60,0.2);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--orange));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#0a0e1a;flex-shrink:0;}
 .user-name{font-weight:700;font-size:13px;}
 .user-pts{color:var(--gold);font-size:11px;font-weight:600;}
-.hdate-bar{background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);padding:5px 14px;text-align:center;font-size:12px;color:var(--muted);}
+.hdate-bar{background:rgba(255,248,220,0.9);border-bottom:1px solid rgba(180,140,60,0.2);padding:5px 14px;text-align:center;font-size:12px;color:var(--muted);}
 .hdate-bar span{color:var(--gold);font-weight:700;}
 .icon-btn{background:rgba(255,255,255,0.07);border:1px solid var(--border);border-radius:9px;padding:6px 11px;cursor:pointer;font-size:12px;color:var(--text);}
 
 /* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,14,26,0.97);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:flex;z-index:100;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,250,240,0.97);backdrop-filter:blur(10px);border-top:1px solid rgba(180,140,60,0.2);display:flex;z-index:100;}
 .nav-item{flex:1;padding:9px 4px 7px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:inherit;}
 .nav-item.active{color:var(--gold);}
 .nav-item .nav-icon{font-size:19px;}
@@ -91,7 +91,7 @@ body::before{content:'';position:fixed;inset:0;background:url('logo.webp') cente
 .cat-tasks.collapsed{display:none;}
 
 /* TASK ITEMS */
-.task-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s;user-select:none;position:relative;overflow:hidden;}
+.task-item{background:rgba(255,255,255,0.8);border:1px solid rgba(180,140,60,0.18);border-radius:12px;padding:12px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s;user-select:none;position:relative;overflow:hidden;}
 .task-item:active{transform:scale(.98);}
 /* DONE */
 .task-item.checked{background:rgba(107,255,184,0.07);border-color:rgba(107,255,184,0.3);border-right:4px solid var(--green);cursor:default;}
