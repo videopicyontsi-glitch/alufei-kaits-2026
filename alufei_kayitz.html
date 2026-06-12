@@ -323,7 +323,7 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
     </div>
     <div id="adminEntry" style="margin-top:14px;background:rgba(255,107,107,0.05);border:1px solid rgba(255,107,107,0.18);border-radius:12px;padding:13px;">
       <div style="font-size:12px;color:rgba(255,150,150,0.8);font-weight:700;margin-bottom:8px;">🏫 כניסת מנהל / מורה</div>
-      <input id="adminPassInput" type="password" placeholder="סיסמת מנהל" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid rgba(255,107,107,0.25);background:rgba(255,255,255,0.05);color:#fff;font-size:14px;outline:none;font-family:inherit;direction:ltr;text-align:left;">
+      <input id="adminPassInput" type="password" placeholder="סיסמת מנהל" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid rgba(255,107,107,0.25);background:#000;color:#fff;font-size:14px;outline:none;font-family:inherit;direction:ltr;text-align:left;">
       <button onclick="doAdminLogin()" style="width:100%;margin-top:8px;padding:10px;border-radius:9px;border:none;background:linear-gradient(90deg,#ff6b6b,#ff8c42);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;">כניסה 🔐</button>
       <div class="err" id="adminErr"></div>
     </div>
@@ -340,12 +340,14 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
     <button class="icon-btn" onclick="doLogout()">יציאה</button>
   </div>
   <div class="admin-content">
-    <div class="admin-tabs">
+    <div class="admin-tabs" style="flex-wrap:wrap;">
       <button class="admin-tab active" id="atab1" onclick="showAdminTab('students')">👥 תלמידים</button>
       <button class="admin-tab" id="atab2" onclick="showAdminTab('graphs')">📊 גרפים</button>
+      <button class="admin-tab" id="atab3" onclick="showAdminTab('taskpts')">⚙️ נקודות משימות</button>
     </div>
     <div id="adminTabStudents"></div>
     <div id="adminTabGraphs" style="display:none"></div>
+    <div id="adminTabTaskPts" style="display:none"></div>
   </div>
 </div>
 
@@ -646,18 +648,19 @@ const BONUS_POOL=[
 // ============================================================
 const STUDY_CONTENT={
 math:[
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">47 × 8 = ?</span>',q:'מה התוצאה של 47 × 8?',a:['376','366','386','326'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">156 + 89 = ?</span>',q:'מה התוצאה של 156 + 89?',a:['245','235','255','265'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">200 − 73 = ?</span>',q:'מה התוצאה של 200 − 73?',a:['127','117','137','123'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">144 ÷ 12 = ?</span>',q:'מה התוצאה של 144 ÷ 12?',a:['12','11','13','14'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">38 × 6 = ?</span>',q:'מה התוצאה של 38 × 6?',a:['228','218','238','226'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">500 − 187 = ?</span>',q:'מה התוצאה של 500 − 187?',a:['313','323','303','333'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">24 × 9 = ?</span>',q:'מה התוצאה של 24 × 9?',a:['216','214','218','206'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">345 + 278 = ?</span>',q:'מה התוצאה של 345 + 278?',a:['623','613','633','623'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">17 × 7 = ?</span>',q:'מה התוצאה של 17 × 7?',a:['119','109','129','117'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">630 ÷ 7 = ?</span>',q:'מה התוצאה של 630 ÷ 7?',a:['90','80','70','100'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">56 × 4 = ?</span>',q:'מה התוצאה של 56 × 4?',a:['224','214','234','220'],c:0,timer:30},
-  {title:'חשבון יומי',tx:'נסה לפתור בראש:\n\n<span style="font-size:28px;font-weight:900;color:var(--gold)">15² = ?</span>',q:'מה התוצאה של 15 בריבוע?',a:['225','215','235','125'],c:0,timer:30},
+  {title:'שברים – חיבור וחיסור',tx:'<b>כלל:</b> לחבר/לחסר שברים – צריך מכנה משותף!<br><br><span style="color:var(--gold);font-size:17px">1/2 + 1/3 = 3/6 + 2/6 = <b>5/6</b></span>',qs:[{q:'1/2 + 1/3 = ?',a:['5/6','2/5','2/6','3/6'],c:0},{q:'3/4 − 1/4 = ?',a:['1/2','2/4 = 1/2','1/8','3/8'],c:0}]},
+  {title:'שברים – כפל וחילוק',tx:'<b>כפל שברים:</b> מונה × מונה ומכנה × מכנה<br><b>חילוק:</b> הופכים את השבר השני וכופלים<br><br><span style="color:var(--gold);font-size:17px">2/3 × 3/4 = 6/12 = <b>1/2</b></span>',qs:[{q:'2/3 × 3/4 = ?',a:['1/2','2/7','5/7','6/7'],c:0},{q:'4/5 ÷ 2/5 = ?',a:['2','8/25','1/2','4/10'],c:0}]},
+  {title:'אחוזים',tx:'<b>נוסחה:</b> X% מ-N = (X ÷ 100) × N<br><br>דוגמה: 20% מ-80 = 0.2 × 80 = <span style="color:var(--gold);font-size:17px"><b>16</b></span>',qs:[{q:'20% מ-150 = ?',a:['30','25','35','15'],c:0},{q:'מחיר 200 ₪ ירד ב-15%. כמה עולה עכשיו?',a:['170 ₪','185 ₪','150 ₪','180 ₪'],c:0}]},
+  {title:'מספרים שלמים (חיוביים ושליליים)',tx:'<b>כפל שליליים:</b><br>• מינוס × מינוס = <span style="color:#6bffb8">פלוס</span><br>• פלוס × מינוס = <span style="color:#ff6b6b">מינוס</span><br><br><span style="color:var(--gold)">(-3) × (-5) = +15</span>',qs:[{q:'(-3) × (-5) = ?',a:['15','-15','-8','8'],c:0},{q:'(-8) + 3 = ?',a:['-5','-11','5','11'],c:0}]},
+  {title:'משוואה פשוטה',tx:'<b>פתרון משוואה:</b> מבודדים את ה-x<br><br><span style="color:var(--gold)">2x + 3 = 11<br>2x = 8<br>x = 4</span>',qs:[{q:'2x + 3 = 11, מהו x?',a:['4','7','5','3'],c:0},{q:'3x − 6 = 9, מהו x?',a:['5','1','4','3'],c:0}]},
+  {title:'הצבה בביטוי אלגברי',tx:'<b>הצבה:</b> מחליפים את האות בערך הנתון<br><br>אם a=3, b=2:<br><span style="color:var(--gold)">2a + 3b = 2×3 + 3×2 = 6 + 6 = <b>12</b></span>',qs:[{q:'אם a=3, b=2 — מה שווה 2a + 3b?',a:['12','10','15','8'],c:0},{q:'אם x=4 — מה שווה x² − 2x?',a:['8','16','12','4'],c:0}]},
+  {title:'יחס ושיעור',tx:'<b>יחס</b> = השוואה בין שתי כמויות<br><b>שיעור</b> = יחס קבוע בין כמויות<br><br>דוגמה: יחס 3:2 מתוך 30 → 3+2=5, 30÷5=6, בנים=18 בנות=<span style="color:var(--gold)">12</span>',qs:[{q:'יחס בנים:בנות = 3:2, יש 30 תלמידים. כמה בנות?',a:['12','18','15','10'],c:0},{q:'5 ק"ג עולים 40 ₪. כמה יעלו 8 ק"ג?',a:['64 ₪','48 ₪','56 ₪','72 ₪'],c:0}]},
+  {title:'שטח והיקף',tx:'<b>ריבוע:</b> שטח = a² , היקף = 4a<br><b>מלבן:</b> שטח = a×b , היקף = 2(a+b)<br><br><span style="color:var(--gold)">ריבוע עם צלע 5: שטח=25, היקף=20</span>',qs:[{q:'שטח ריבוע עם צלע 7 ס"מ?',a:['49 ס"מ²','28 ס"מ²','14 ס"מ²','56 ס"מ²'],c:0},{q:'היקף מלבן: גובה 4, רוחב 6 ס"מ?',a:['20 ס"מ','24 ס"מ','10 ס"מ','48 ס"מ'],c:0}]},
+  {title:'חזקות ושורשים',tx:'<b>חזקה:</b> aⁿ = a כפול עצמו n פעמים<br><b>שורש:</b> √a = המספר שבריבועו נותן a<br><br><span style="color:var(--gold)">2⁵ = 32 ,   √144 = 12</span>',qs:[{q:'2⁵ = ?',a:['32','25','16','64'],c:0},{q:'√144 = ?',a:['12','14','16','11'],c:0}]},
+  {title:'ממוצע',tx:'<b>ממוצע:</b> סכום כל הערכים ÷ כמות הערכים<br><br>דוגמה: 4, 7, 9, 8, 2<br>סכום = 30, כמות = 5<br><span style="color:var(--gold)">ממוצע = 30 ÷ 5 = <b>6</b></span>',qs:[{q:'מה הממוצע של: 4, 7, 9, 8, 2?',a:['6','5','7','8'],c:0},{q:'ציונים: 80, 90, 70. מה הממוצע?',a:['80','75','85','70'],c:0}]},
+  {title:'הסתברות',tx:'<b>הסתברות</b> = מספר האפשרויות הרצויות ÷ סך כל האפשרויות<br><br>בקובייה (1–6): הסיכוי ל-6 = <span style="color:var(--gold)">1/6</span>',qs:[{q:'מה הסיכוי לקבל 6 בהטלת קובייה?',a:['1/6','1/2','2/6','1/3'],c:0},{q:'שקית: 3 כדורים אדומים + 7 כחולים. סיכוי לשלוף כחול?',a:['7/10','3/10','1/2','7/3'],c:0}]},
+  {title:'סדר פעולות',tx:'<b>סדר פעולות:</b><br>1. סוגריים<br>2. חזקות ושורשים<br>3. כפל וחילוק<br>4. חיבור וחיסור<br><br><span style="color:var(--gold)">(3+5)×4 − 10 = 8×4 − 10 = 32 − 10 = <b>22</b></span>',qs:[{q:'(3+5) × 4 − 10 = ?',a:['22','30','18','12'],c:0},{q:'48 ÷ (2+4) + 3×5 = ?',a:['23','16','28','43'],c:0}]},
+  {title:'שברים עשרוניים ואחוזים',tx:'<b>המרה:</b><br>1/4 = 0.25 = 25%<br>1/2 = 0.5 = 50%<br>3/4 = 0.75 = 75%<br><br><span style="color:var(--gold)">35% = 0.35 = 7/20</span>',qs:[{q:'כמה זה 3/4 כאחוז?',a:['75%','34%','70%','25%'],c:0},{q:'0.6 = ?/10',a:['6/10','6/100','3/4','2/3'],c:0}]},
 ],
 english:[
   {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Curious"</span><br><br>משפט לדוגמה: <i>"He was curious about the stars."</i>',q:'What does "curious" mean? (מה המשמעות בעברית?)',a:['סקרן / רוצה לדעת','כועס','עצוב','שמח'],c:0,timer:30},
@@ -706,7 +709,7 @@ general:[
 };
 
 const STUDY_META={
-  math:   {badge:'🔢',title:'חשבון יומי – תרגיל'},
+  math:   {badge:'🔢',title:'חשבון כיתה ז׳ – תרגיל'},
   english:{badge:'🇬🇧',title:'אנגלית – מילה יומית'},
   hebrew: {badge:'📝',title:'עברית – שאלה יומית'},
   science:{badge:'🔬',title:'מדעים – עובדה יומית'},
@@ -725,7 +728,6 @@ const CATEGORIES=[
   {id:'torah',icon:'📖',title:'לימוד תורה',tasks:[
     {id:'mishna_daily',name:'5 משניות + שאלת הבנה',pts:12,interactive:'mishna',icon:'📜'},
     {id:'halacha_daily',name:'הלכה יומית + שאלת הבנה',pts:10,interactive:'halacha',icon:'⚖️'},
-    {id:'torah_video',name:'סרטון תורה + שאלה',pts:8,interactive:'video',icon:'🎬'},
     {id:'learn_with',name:'לימוד עם אבא / חבר',pts:15},
     {id:'pasuk',name:'שינון פסוק',pts:10,interactive:'pasuk',icon:'📜'},
   ]},
@@ -773,7 +775,7 @@ function getHD(){const d=new Date();d.setHours(0,0,0,0);for(let i=HEB_MONTHS.len
 // ============================================================
 // TIME
 // ============================================================
-const PRAYER_WIN={shacharit:{s:5,e:14},mincha:{s:12,e:20},arvit:{s:18,e:30}};
+const PRAYER_WIN={shacharit:{s:5,e:9.5},mincha:{s:13,e:20},arvit:{s:20,e:30}};
 function getPrayerState(slot){if(!slot||slot==='shabbat')return 'available';const h=new Date().getHours();const hh=h<5?h+24:h;const w=PRAYER_WIN[slot];if(!w)return 'available';if(hh>=w.s&&hh<w.e)return 'current';if(hh>=w.e)return 'past';return 'future';}
 function isShabbat(){const d=new Date().getDay(),h=new Date().getHours();return d===6||(d===5&&h>=18);}
 function getSlot(){const h=new Date().getHours(),d=new Date().getDay();if(d===6||(d===5&&h>=18))return 'shabbat';if(h>=5&&h<14)return 'shacharit';if(h>=12&&h<20)return 'mincha';return 'arvit';}
@@ -1008,9 +1010,60 @@ function updActiveDays(un,u){const k=todayKey();if(u.lastDay!==k){const y=new Da
 // LEARN MODAL – with 60s timer + one-time answer
 // ============================================================
 let _ltid=null,_lpts=0,_lFullPts=0,_lAnswered=false,_timerInt=null;
+let _multiQs=null,_multiQCorrect=0;
+
+function buildMultiQ(qs,fullPts){
+  _multiQs=qs; _multiQCorrect=0;
+  let html='';
+  qs.forEach((qObj,idx)=>{
+    const btns=qObj.a.map((a,i)=>`<button class="answer-btn" id="mqbtn_${idx}_${i}" onclick="selectAnswerN(${i},${qObj.c},${fullPts},${idx},${qs.length})">${a}</button>`).join('');
+    html+=`<div class="question-box" id="mqbox_${idx}" ${idx>0?'style="display:none;margin-top:8px"':''}>
+      <div class="question-label">📝 שאלה ${idx+1} מתוך ${qs.length}</div>
+      <div class="question-text">${qObj.q}</div>
+      <div id="mqAnswers_${idx}">${btns}</div>
+      <div id="mqResult_${idx}" style="display:none" class="answer-result"></div>
+    </div>`;
+  });
+  return html;
+}
+
+function selectAnswerN(chosen,correct,fullPts,qIdx,total){
+  const q=_multiQs[qIdx];
+  for(let i=0;i<q.a.length;i++){
+    const b=document.getElementById(`mqbtn_${qIdx}_${i}`);
+    if(!b)continue;
+    b.style.pointerEvents='none';
+    if(i===correct)b.classList.add('correct');
+    else if(i===chosen)b.classList.add('wrong');
+    else b.classList.add('disabled');
+  }
+  const res=document.getElementById(`mqResult_${qIdx}`);
+  res.style.display='';
+  if(chosen===correct){
+    _multiQCorrect++;
+    res.className='answer-result ok';
+    res.textContent='✅ נכון מאוד!';
+  }else{
+    res.className='answer-result nok';
+    res.textContent='❌ לא נכון – התשובה הנכונה מסומנת בירוק.';
+  }
+  if(qIdx<total-1){
+    setTimeout(()=>{
+      const next=document.getElementById(`mqbox_${qIdx+1}`);
+      next.style.display='';
+      next.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },600);
+  }else{
+    _lpts=_multiQCorrect===total?fullPts:(_multiQCorrect>0?Math.round(fullPts*0.6):3);
+    _lAnswered=true;
+    const btn=document.getElementById('mConfirm');
+    btn.textContent=_multiQCorrect===total?`✓ מעולה! +${fullPts} נקודות`:`✓ סיימתי (+${_lpts} נקודות)`;
+    btn.style.display='';
+  }
+}
 
 function openLearnModal(type,tid,pts,subject){
-  _ltid=tid;_lAnswered=false;_lFullPts=pts;_lpts=5;
+  _ltid=tid;_lAnswered=false;_lFullPts=pts;_lpts=5;_multiQs=null;
   clearInterval(_timerInt);
   document.getElementById('mHdate').textContent=getHD();
   document.getElementById('mConfirm').style.display='none';
@@ -1040,10 +1093,12 @@ function openLearnModal(type,tid,pts,subject){
     const meta=STUDY_META[subject]||{badge:'📚',title:'לימוד'};
     badge=meta.badge; badgeText=meta.title;
     document.getElementById('mTitle').textContent=entry.title;
-    const plainText=entry.tx.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
-    body=`<div class="modal-text" style="font-size:14px;line-height:1.9">${entry.tx}</div>
-    `;
-    body+=buildQuestion(entry.q,entry.a,entry.c,pts,entry.timer||60);
+    body=`<div class="modal-text" style="font-size:14px;line-height:1.9">${entry.tx}</div>`;
+    if(entry.qs){
+      body+=buildMultiQ(entry.qs,pts);
+    }else{
+      body+=buildQuestion(entry.q,entry.a,entry.c,pts,entry.timer||60);
+    }
 
   }else if(type==='pasuk'){
     const psk=PESUKIM[dayIdx()%PESUKIM.length];
@@ -1086,7 +1141,7 @@ function openLearnModal(type,tid,pts,subject){
   // start timer after DOM is ready
   const timerEl=document.getElementById('qTimer');
   const answersEl=document.getElementById('qAnswers');
-  if(timerEl&&answersEl){
+  if(timerEl&&answersEl&&!_multiQs){
     answersEl.style.display='none';
     const totalSecs=parseInt(timerEl.dataset.secs)||60;
     let secs=totalSecs;
@@ -1276,10 +1331,105 @@ function showCelebration(el){if(!el)return;const rect=el.getBoundingClientRect()
 function showAdminTab(tab){
   document.getElementById('atab1').classList.toggle('active',tab==='students');
   document.getElementById('atab2').classList.toggle('active',tab==='graphs');
+  document.getElementById('atab3').classList.toggle('active',tab==='taskpts');
   document.getElementById('adminTabStudents').style.display=tab==='students'?'':'none';
   document.getElementById('adminTabGraphs').style.display=tab==='graphs'?'':'none';
+  document.getElementById('adminTabTaskPts').style.display=tab==='taskpts'?'':'none';
   if(tab==='graphs')renderAdminGraphs();
+  if(tab==='taskpts')renderTaskPtsEditor();
 }
+
+// ── Task Points Editor ──
+function getCustomPts(){
+  try{return JSON.parse(localStorage.getItem('ak_custom_pts')||'{}');}catch{return {};}
+}
+function saveCustomPts(obj){
+  localStorage.setItem('ak_custom_pts',JSON.stringify(obj));
+  // עדכן גם את ה-CATEGORIES בזיכרון
+  obj && CATEGORIES.forEach(cat=>cat.tasks.forEach(t=>{
+    if(obj[t.id]!==undefined) t.pts=obj[t.id];
+  }));
+}
+// טען נקודות מותאמות בהפעלה
+(function applySavedPts(){
+  const saved=getCustomPts();
+  CATEGORIES.forEach(cat=>cat.tasks.forEach(t=>{
+    if(saved[t.id]!==undefined) t.pts=saved[t.id];
+  }));
+})();
+
+function renderTaskPtsEditor(){
+  const saved=getCustomPts();
+  let html=`
+    <div style="background:rgba(247,201,72,0.07);border:1px solid rgba(247,201,72,0.2);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:rgba(255,220,100,0.85);">
+      ⚙️ <b>עריכת נקודות משימות</b> — שינויים נשמרים מיד ומשפיעים על כל המשתמשים החדשים
+    </div>`;
+
+  CATEGORIES.forEach(cat=>{
+    html+=`<div style="margin-bottom:18px;">
+      <div style="font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">${cat.icon} ${cat.title}</div>`;
+    cat.tasks.forEach(t=>{
+      const current = saved[t.id]!==undefined ? saved[t.id] : t.pts;
+      const isChanged = saved[t.id]!==undefined && saved[t.id]!==t._origPts;
+      html+=`
+        <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;margin-bottom:5px;">
+          <div style="flex:1;font-size:13px;font-weight:600;">${t.name}</div>
+          <button onclick="changeTaskPts('${t.id}',-5)" style="width:32px;height:32px;border-radius:8px;border:none;background:rgba(255,107,107,0.18);color:#ff8080;font-size:16px;font-weight:900;cursor:pointer;">−</button>
+          <input type="number" id="tpts_${t.id}" value="${current}" min="1" max="100"
+            onchange="setTaskPts('${t.id}',this.value)"
+            style="width:56px;text-align:center;padding:6px;border-radius:8px;border:1.5px solid rgba(247,201,72,0.3);background:rgba(20,28,48,0.8);color:#f7c948;font-size:15px;font-weight:900;font-family:inherit;">
+          <button onclick="changeTaskPts('${t.id}',+5)" style="width:32px;height:32px;border-radius:8px;border:none;background:rgba(107,255,184,0.15);color:#6bffb8;font-size:16px;font-weight:900;cursor:pointer;">+</button>
+          <button onclick="resetTaskPts('${t.id}',${t.pts})" title="איפוס לברירת מחדל" style="width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--muted);font-size:13px;cursor:pointer;">↺</button>
+        </div>`;
+    });
+    html+='</div>';
+  });
+
+  html+=`<button onclick="resetAllTaskPts()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid rgba(255,107,107,0.3);background:rgba(255,107,107,0.08);color:#ff8080;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;">🔄 איפוס כל הנקודות לברירת מחדל</button>`;
+
+  document.getElementById('adminTabTaskPts').innerHTML=html;
+}
+
+function changeTaskPts(taskId, delta){
+  const inp=document.getElementById('tpts_'+taskId);
+  if(!inp)return;
+  const newVal=Math.max(1,Math.min(200,parseInt(inp.value||0)+delta));
+  inp.value=newVal;
+  setTaskPts(taskId,newVal);
+}
+
+function setTaskPts(taskId, val){
+  const n=parseInt(val);
+  if(isNaN(n)||n<1)return;
+  const saved=getCustomPts();
+  saved[taskId]=n;
+  saveCustomPts(saved);
+  // עדכן גם ב-CATEGORIES
+  CATEGORIES.forEach(cat=>cat.tasks.forEach(t=>{if(t.id===taskId)t.pts=n;}));
+  showToast(`✅ עודכן ל-${n} נק'`,'pts');
+}
+
+function resetTaskPts(taskId, origPts){
+  const inp=document.getElementById('tpts_'+taskId);
+  if(inp) inp.value=origPts;
+  const saved=getCustomPts();
+  delete saved[taskId];
+  saveCustomPts(saved);
+  CATEGORIES.forEach(cat=>cat.tasks.forEach(t=>{if(t.id===taskId)t.pts=origPts;}));
+  showToast(`↺ אופס ל-${origPts} נק'`,'warn');
+}
+
+function resetAllTaskPts(){
+  if(!confirm('לאפס את כל הנקודות לברירת המחדל?'))return;
+  localStorage.removeItem('ak_custom_pts');
+  // איפוס CATEGORIES
+  CATEGORIES.forEach(cat=>cat.tasks.forEach(t=>{if(t._origPts)t.pts=t._origPts;}));
+  renderTaskPtsEditor();
+  showToast('🔄 כל הנקודות אופסו','warn');
+}
+
+// שמור ערכי מקור
+CATEGORIES.forEach(cat=>cat.tasks.forEach(t=>{t._origPts=t.pts;}));
 
 // ── Collect student data ──
 function collectStudents(){
