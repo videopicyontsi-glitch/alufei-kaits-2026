@@ -591,6 +591,40 @@ const AVOT=[
   {r:'אבות ו׳:ה׳',s:'אל תבקש גדולה לעצמך',t:'אַל תְּבַקֵּשׁ גְּדֻלָּה לְעַצְמְךָ, וְאַל תַּחְמֹד כָּבוֹד. יוֹתֵר מִלִּמּוּדְךָ עֲשֵׂה. וְאַל תִּתְאַוֶּה לְשֻׁלְחָנָם שֶׁל מְלָכִים.'},
 ];
 
+// Chapter boundaries in MISH array + comprehension question per chapter
+const MISHNA_CHAPTERS=[
+ {name:'פרק א׳ – יציאות השבת',start:0,end:4,
+  q:'העני הכניס את ידו לבית ובעל הבית נטל ממנה — מי חייב?',
+  a:['העני חייב ובעל הבית פטור','בעל הבית חייב והעני פטור','שניהם חייבים','שניהם פטורים'],c:0,timer:90},
+ {name:'פרק ב׳ – נר שבת',start:5,end:9,
+  q:'על כמה דברים אמרו שנשים עלולות להיענש אם אינן זהירות?',
+  a:['שלושה — נידה, חלה, הדלקת הנר','שניים — חלה ונר','ארבעה','אחד — הדלקת הנר'],c:0,timer:90},
+ {name:'פרק ג׳ – כירה ותבשיל',start:10,end:14,
+  q:'כירה שהוסקה בגפת ועצים — מה צריך לעשות כדי שמותר להשהות עליה תבשיל?',
+  a:['לגרוף את הגחלים או לכסות באפר','לכבות את האש לגמרי','להמתין עד הלילה','שום דבר, מותר מיד'],c:0,timer:90},
+ {name:'פרק ד׳ – טמינה',start:15,end:17,
+  q:'מדוע אסור לטמון תבשיל בדבר שמוסיף הבל?',
+  a:['כי התבשיל עלול להתבשל בשבת','כי זה מכבה את הנר','כי זה אסור מן התורה','כי זה מזיק לאוכל'],c:0,timer:90},
+ {name:'פרק ה׳ – יציאת בהמה',start:18,end:20,
+  q:'מדוע לא יצא חמור עם מרדעת שאינה קשורה לו?',
+  a:['כי זה נחשב משא ואסור לצאת עמה בשבת','כי קשורה לחמור מספיק','כי חמור פטור ממצוות','כי זה מצער בעלי חיים'],c:0,timer:90},
+ {name:'פרק ו׳ – תכשיטי אשה',start:21,end:23,
+  q:'מדוע אשה לא תצא עם תכשיט פגום בשבת?',
+  a:['שמא תסירנו ברשות הרבים להראותו ותטלטל ד׳ אמות','כי זה מכוער','כי אסור לצאת עם תכשיטים','כי זה גורם לאיסור כיבוי'],c:0,timer:90},
+];
+let _mNewPos=null;
+function getDailyMishnaForUser(ud){
+  const total=MISH.length;
+  const pos=(ud.mishnaPos||0)%total;
+  let chIdx=MISHNA_CHAPTERS.findIndex(ch=>pos>=ch.start&&pos<=ch.end);
+  if(chIdx<0)chIdx=0;
+  const ch=MISHNA_CHAPTERS[chIdx];
+  const count=Math.min(5,ch.end-pos+1);
+  const indices=[];
+  for(let i=pos;i<pos+count;i++)indices.push(i);
+  return{title:`${ch.name}`,indices,q:ch.q,a:ch.a,c:ch.c,timer:ch.timer,newPos:(ud.mishnaPos||0)+count};
+}
+
 // Mishna sets: 5 mishnayot + comprehension question
 const MISHNA_SETS=[
   {title:'שבת א׳:א׳–ה׳ – יציאות השבת',idx:[0,1,2,3,4],
@@ -1312,7 +1346,8 @@ function completeTask(tid,pts){
   const k=todayKey();
   if(!u.days[k])u.days[k]={checked:{},bonusDone:false};
   const dd=u.days[k];
-  if(dd.checked[tid]){showToast('✅ כבר בוצע היום!','warn');return;} // anti-cheat guard
+  if(dd.checked[tid]){showToast('✅ כבר בוצע היום!','warn');return;}
+  if(tid==='mishna_daily'&&_mNewPos!==null){u.mishnaPos=_mNewPos;_mNewPos=null;}
   const prevRank=getRank(u.totalPts||0).name;
   dd.checked[tid]=true;
   u.totalPts=(u.totalPts||0)+pts;
@@ -1409,12 +1444,13 @@ function openLearnModal(type,tid,pts,subject){
   let badge='📖',badgeText='לימוד',body='';
 
   if(type==='mishna'){
-    const set=dailyMishnaSet();
-    badge='📜';badgeText='5 משניות + שאלת הבנה';
+    const ud=getUD(cur())||{};
+    const set=getDailyMishnaForUser(ud);
+    _mNewPos=set.newPos;
+    badge='📜';badgeText='משניות + שאלת הבנה';
     document.getElementById('mTitle').textContent=set.title;
-    const mishnaText=set.idx.map((i,n)=>{const m=MISH[i%MISH.length];return`משנה ${n+1}: ${m.t}`;}).join(' ');
     body=``;
-    body+=set.idx.map((i,n)=>{const m=MISH[i%MISH.length];return`<div class="mishna-card"><div class="mishna-num">משנה ${n+1} · ${m.r}</div><div class="mishna-text">${m.t}</div><div class="mishna-summary">💡 ${m.s}</div><div class="mishna-pirush">📖 <b>פירוש:</b> ${m.p}</div></div>`;}).join('');
+    body+=set.indices.map((i,n)=>{const m=MISH[i%MISH.length];return`<div class="mishna-card"><div class="mishna-num">משנה ${n+1} · ${m.r}</div><div class="mishna-text">${m.t}</div><div class="mishna-summary">💡 ${m.s}</div><div class="mishna-pirush">📖 <b>פירוש:</b> ${m.p}</div></div>`;}).join('');
     body+=buildQuestion(set.q,set.a,set.c,pts,set.timer||90);
 
   }else if(type==='halacha'){
@@ -1631,17 +1667,31 @@ async function loadShnayimMikra(psk,pts,aliyaLabel){
       const heb=(heTexts[i]||'').replace(/<[^>]+>/g,'');
       const onk=(onkTexts[i]||'').replace(/<[^>]+>/g,'');
       if(!heb)continue;
-      html+=`<div style="margin-bottom:14px;padding:10px 12px;border-radius:10px;background:rgba(180,140,60,0.06);border:1px solid rgba(180,140,60,0.18);">
-        <div style="font-size:16px;line-height:1.9;color:var(--text);font-weight:600;">${heb}</div>
-        ${onk?`<div style="font-size:14px;line-height:1.8;color:rgba(150,200,255,0.85);margin-top:6px;padding-top:6px;border-top:1px solid rgba(180,140,60,0.15);">${onk}</div>`:''}
+      html+=`<div style="margin-bottom:14px;padding:10px 12px;border-radius:10px;background:rgba(245,240,230,0.08);border:1px solid rgba(180,140,60,0.25);">
+        <div style="font-size:16px;line-height:2;color:#f5edd8;font-weight:600;">${heb}</div>
+        ${onk?`<div style="font-size:14px;line-height:1.9;color:#a8d4f5;margin-top:7px;padding-top:7px;border-top:1px solid rgba(180,140,60,0.2);">${onk}</div>`:''}
       </div>`;
     }
     html+=`</div>`;
-    html+=`<div style="display:flex;gap:8px;margin-top:12px;">
-      <button onclick="confirmPasukYes(${pts})" style="flex:1;padding:11px;border-radius:9px;border:none;background:rgba(107,255,184,0.15);border:1.5px solid rgba(107,255,184,0.4);color:#6bffb8;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;">✅ סיימתי! (+${pts} נק׳)</button>
+    html+=`<div id="smTimerRow" style="text-align:center;margin-top:10px;color:var(--gold);font-size:13px;">⏱ קרא את כל העלייה — ניתן לסמן עוד <b id="smSecs">60</b> שניות</div>`;
+    html+=`<div style="display:flex;gap:8px;margin-top:8px;">
+      <button id="smDoneBtn" disabled onclick="confirmPasukYes(${pts})" style="flex:1;padding:11px;border-radius:9px;border:none;background:rgba(107,255,184,0.08);border:1.5px solid rgba(107,255,184,0.2);color:#6bffb8;font-size:14px;font-weight:800;cursor:not-allowed;font-family:inherit;opacity:0.45;">✅ סיימתי! (+${pts} נק׳)</button>
       <button onclick="closeModal()" style="padding:11px 16px;border-radius:9px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit;">סגור</button>
     </div>`;
     body.innerHTML=html;
+    let secs=60;
+    const smIv=setInterval(()=>{
+      secs--;
+      const el=document.getElementById('smSecs');
+      if(el)el.textContent=secs;
+      if(secs<=0){
+        clearInterval(smIv);
+        const btn=document.getElementById('smDoneBtn');
+        const row=document.getElementById('smTimerRow');
+        if(btn){btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';btn.style.background='rgba(107,255,184,0.15)';btn.style.border='1.5px solid rgba(107,255,184,0.4)';}
+        if(row)row.style.display='none';
+      }
+    },1000);
   }catch(e){
     body.innerHTML=`<div style="text-align:center;padding:20px;color:#ff8080;">
       <div style="font-size:20px;margin-bottom:8px">⚠️</div>
