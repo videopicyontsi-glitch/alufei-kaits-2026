@@ -316,7 +316,14 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
       <div class="field"><label>שם מלא</label><input id="regName" type="text" placeholder="שם פרטי ומשפחה"></div>
       <div class="field"><label>שם משתמש</label><input id="regUser" type="text" placeholder="ייחודי, ללא רווחים"></div>
       <div class="field"><label>כיתה</label>
-        <select id="regClass" size="14" style="width:100%;border-radius:9px;border:1.5px solid rgba(180,140,60,0.3);padding:6px;font-size:14px;font-family:inherit;background:#fff;color:#333;"><option value="">בחר כיתה</option><option>ז'1</option><option>ז'2</option><option>ז'3</option><option>ז'4</option><option>ז'5</option><option>ז'6</option><option>ח'1</option><option>ח'2</option><option>ח'3</option><option>ח'4</option><option>ח'5</option><option>ח'6</option><option>אחר</option></select>
+        <input type="hidden" id="regClass" value="">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+          <div style="width:100%;font-size:11px;color:#999;margin-bottom:2px;">כיתה ז׳</div>
+          ${["ז'1","ז'2","ז'3","ז'4","ז'5","ז'6"].map(c=>`<button type="button" onclick="selectClass(this,'${c}')" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">${c}</button>`).join('')}
+          <div style="width:100%;font-size:11px;color:#999;margin-top:4px;margin-bottom:2px;">כיתה ח׳</div>
+          ${["ח'1","ח'2","ח'3","ח'4","ח'5","ח'6"].map(c=>`<button type="button" onclick="selectClass(this,'${c}')" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">${c}</button>`).join('')}
+          <button type="button" onclick="selectClass(this,'אחר')" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;margin-top:4px;">אחר</button>
+        </div>
       </div>
       <div class="field"><label>סיסמה</label><input id="regPass" type="password" placeholder="לפחות 4 תווים"></div>
       <button class="btn btn-gold mt8" onclick="doRegister()">הצטרפות לאתגר! 🏆</button>
@@ -1108,6 +1115,11 @@ function saveDD(un,dd){const u=getUD(un);if(!u)return;if(!u.days)u.days={};u.day
 function switchAuthTab(t){document.getElementById('tabLogin').classList.toggle('active',t==='login');document.getElementById('tabReg').classList.toggle('active',t==='register');document.getElementById('loginForm').style.display=t==='login'?'':'none';document.getElementById('registerForm').style.display=t==='register'?'':'none';}
 const ADMIN_PASS='admin123';
 function toggleAdminEntry(){const el=document.getElementById('adminEntry');el.style.display=el.style.display==='none'?'':'none';if(el.style.display!=='none')document.getElementById('adminPassInput').focus();}
+function selectClass(btn,val){
+  document.getElementById('regClass').value=val;
+  btn.closest('div').querySelectorAll('button').forEach(b=>{b.style.background='#fff';b.style.color='#555';b.style.borderColor='rgba(180,140,60,0.35)';});
+  btn.style.background='#f7c948';btn.style.color='#333';btn.style.borderColor='#f7c948';
+}
 function doAdminLogin(){const p=document.getElementById('adminPassInput').value;const e=document.getElementById('adminErr');if(!p){e.textContent='הכנס סיסמה';return;}if(p===ADMIN_PASS){e.textContent='';document.getElementById('adminPassInput').value='';document.getElementById('adminEntry').style.display='none';setCur('__admin__');enterAdminMode();}else{e.textContent='סיסמה שגויה';}}
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('adminEntry')&&document.getElementById('adminEntry').style.display!=='none'&&document.activeElement===document.getElementById('adminPassInput'))doAdminLogin();});
 function doLogin(){const u=document.getElementById('loginUser').value.trim().toLowerCase();const p=document.getElementById('loginPass').value;const e=document.getElementById('loginErr');if(!u||!p){e.textContent='מלא את כל השדות';return;}const us=getUsers();if(!us[u]){e.textContent='שם משתמש לא קיים';return;}if(!chkPass(p,us[u].pass)){e.textContent='סיסמה שגויה';return;}setCur(u);enterApp();}
