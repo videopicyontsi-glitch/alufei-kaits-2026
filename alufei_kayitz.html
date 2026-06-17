@@ -354,6 +354,21 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
   </div>
 </div>
 
+<!-- SHABBAT LOCK -->
+<div id="shabbatLock" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0d1a12,#1a2d1a);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;">
+  <div style="font-size:64px;margin-bottom:16px">🕯️</div>
+  <div style="font-size:28px;font-weight:900;color:#6bffb8;margin-bottom:8px">שבת שלום!</div>
+  <div style="font-size:15px;color:rgba(255,255,255,0.7);margin-bottom:24px;line-height:1.7">האפליקציה שובתת לכבוד שבת קודש<br>תחזור לפעולה במוצאי שבת</div>
+  <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(107,255,184,0.2);border-radius:14px;padding:16px 24px;">
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px">צאת שבת (בקירוב)</div>
+    <div style="font-size:22px;font-weight:900;color:#6bffb8" id="shabbatExitTime">20:30</div>
+  </div>
+  <div style="margin-top:20px;font-size:13px;color:rgba(255,255,255,0.4)">שבת שלום ומבורכת! ✨</div>
+</div>
+
+<!-- MOTZEI SHABBAT BANNER -->
+<div id="motzeiShabbatBanner" style="display:none"></div>
+
 <!-- MAIN -->
 <div id="mainScreen" class="screen">
   <div class="top-bar">
@@ -676,6 +691,154 @@ const VIDEOS=[
 ];
 
 // ============================================================
+// ============================================================
+// PARASHIYOT – summer 2026 (Israel schedule)
+// aliyot[0]=rishon(Sun), [1]=sheni(Mon), ..., [4]=chamishi(Thu), [5]=shishi(Fri), [6]=shvi'i(Fri/Shabbat)
+// ============================================================
+const PARASHIYOT=[
+ {name:'חוקת',shab:new Date(2026,5,21),aliyot:[
+  {ref:'במדבר יט:ב',text:'זֹאת חֻקַּת הַתּוֹרָה אֲשֶׁר צִוָּה יְהוָה לֵאמֹר דַּבֵּר אֶל בְּנֵי יִשְׂרָאֵל וְיִקְחוּ אֵלֶיךָ פָרָה אֲדֻמָּה תְּמִימָה.',hint:'זאת חוקת התורה...'},
+  {ref:'במדבר יט:יז',text:'וְלָקְחוּ לַטָּמֵא מֵעֲפַר שְׂרֵפַת הַחַטָּאת וְנָתַן עָלָיו מַיִם חַיִּים אֶל כֶּלִי.',hint:'ולקחו לטמא מעפר שרפת החטאת...'},
+  {ref:'במדבר כ:ב',text:'וְלֹא הָיָה מַיִם לָעֵדָה וַיִּקָּהֲלוּ עַל מֹשֶׁה וְעַל אַהֲרֹן.',hint:'ולא היה מים לעדה...'},
+  {ref:'במדבר כ:יא',text:'וַיָּרֶם מֹשֶׁה אֶת יָדוֹ וַיַּךְ אֶת הַסֶּלַע בְּמַטֵּהוּ פַּעֲמָיִם וַיֵּצְאוּ מַיִם רַבִּים וַתֵּשְׁתְּ הָעֵדָה וּבְעִירָם.',hint:'וירם משה את ידו ויך את הסלע...'},
+  {ref:'במדבר כ:יד',text:'וַיִּשְׁלַח מֹשֶׁה מַלְאָכִים מִקָּדֵשׁ אֶל מֶלֶךְ אֱדוֹם כֹּה אָמַר אָחִיךָ יִשְׂרָאֵל.',hint:'וישלח משה מלאכים מקדש...'},
+  {ref:'במדבר כא:ח',text:'וַיֹּאמֶר יְהוָה אֶל מֹשֶׁה עֲשֵׂה לְךָ שָׂרָף וְשִׂים אֹתוֹ עַל נֵס וְהָיָה כָּל הַנָּשׁוּךְ וְרָאָה אֹתוֹ וָחָי.',hint:'עשה לך שרף ושים אותו על נס...'},
+  {ref:'במדבר כא:לד',text:'וַיֹּאמֶר יְהוָה אֶל מֹשֶׁה אַל תִּירָא אֹתוֹ כִּי בְיָדְךָ נָתַתִּי אֹתוֹ וְאֶת כָּל עַמּוֹ.',hint:'אל תירא אותו...'},
+ ]},
+ {name:'בלק',shab:new Date(2026,5,28),aliyot:[
+  {ref:'במדבר כב:ב',text:'וַיַּרְא בָּלָק בֶּן צִפּוֹר אֵת כָּל אֲשֶׁר עָשָׂה יִשְׂרָאֵל לָאֱמֹרִי.',hint:'וירא בלק בן צפור...'},
+  {ref:'במדבר כב:טו',text:'וַיֹּסֶף עוֹד בָּלָק שְׁלֹחַ שָׂרִים רַבִּים וְנִכְבָּדִים מֵאֵלֶּה.',hint:'ויוסף עוד בלק שלוח שרים...'},
+  {ref:'במדבר כב:כח',text:'וַיִּפְתַּח יְהוָה אֶת פִּי הָאָתוֹן וַתֹּאמֶר לְבִלְעָם מֶה עָשִׂיתִי לְךָ כִּי הִכִּיתַנִי זֶה שָׁלֹשׁ רְגָלִים.',hint:'ויפתח ה׳ את פי האתון...'},
+  {ref:'במדבר כג:ח',text:'מָה אֶקֹּב לֹא קַבֹּה אֵל וּמָה אֶזְעֹם לֹא זָעַם יְהוָה.',hint:'מה אקב לא קבה אל...'},
+  {ref:'במדבר כג:יט',text:'לֹא אִישׁ אֵל וִיכַזֵּב וּבֶן אָדָם וְיִתְנֶחָם — הַהוּא אָמַר וְלֹא יַעֲשֶׂה וְדִבֶּר וְלֹא יְקִימֶנָּה.',hint:'לא איש אל ויכזב...'},
+  {ref:'במדבר כד:ה',text:'מַה טֹּבוּ אֹהָלֶיךָ יַעֲקֹב מִשְׁכְּנֹתֶיךָ יִשְׂרָאֵל.',hint:'מה טובו אהליך יעקב...'},
+  {ref:'במדבר כד:יז',text:'דָּרַךְ כּוֹכָב מִיַּעֲקֹב וְקָם שֵׁבֶט מִיִּשְׂרָאֵל וּמָחַץ פַּאֲתֵי מוֹאָב וְקַרְקַר כָּל בְּנֵי שֵׁת.',hint:'דרך כוכב מיעקב...'},
+ ]},
+ {name:'פינחס',shab:new Date(2026,6,5),aliyot:[
+  {ref:'במדבר כה:יב',text:'לָכֵן אֱמֹר הִנְנִי נֹתֵן לוֹ אֶת בְּרִיתִי שָׁלוֹם.',hint:'הנני נותן לו את בריתי שלום...'},
+  {ref:'במדבר כו:ב',text:'שְׂאוּ אֶת רֹאשׁ כָּל עֲדַת בְּנֵי יִשְׂרָאֵל מִבֶּן עֶשְׂרִים שָׁנָה וָמַעְלָה לְבֵית אֲבֹתָם.',hint:'שאו את ראש כל עדת בני ישראל...'},
+  {ref:'במדבר כז:ד',text:'לָמָּה יִגָּרַע שֵׁם אָבִינוּ מִתּוֹךְ מִשְׁפַּחְתּוֹ כִּי אֵין לוֹ בֵּן — תְּנָה לָּנוּ אֲחֻזָּה בְּתוֹךְ אֲחֵי אָבִינוּ.',hint:'למה יגרע שם אבינו...'},
+  {ref:'במדבר כז:טז',text:'יִפְקֹד יְהוָה אֱלֹהֵי הָרוּחֹת לְכָל בָּשָׂר אִישׁ עַל הָעֵדָה.',hint:'יפקד ה׳ אלהי הרוחות...'},
+  {ref:'במדבר כח:ב',text:'צַו אֶת בְּנֵי יִשְׂרָאֵל וְאָמַרְתָּ אֲלֵהֶם אֶת קָרְבָּנִי לַחְמִי לְאִשַּׁי רֵיחַ נִיחֹחִי תִּשְׁמְרוּ לְהַקְרִיב לִי בְּמוֹעֲדוֹ.',hint:'את קרבני לחמי לאשי...'},
+  {ref:'במדבר כח:טז',text:'וּבַחֹדֶשׁ הָרִאשׁוֹן בְּאַרְבָּעָה עָשָׂר יוֹם לַחֹדֶשׁ פֶּסַח לַיהוָה.',hint:'בחודש הראשון פסח לה׳...'},
+  {ref:'במדבר כט:א',text:'וּבַחֹדֶשׁ הַשְּׁבִיעִי בְּאֶחָד לַחֹדֶשׁ מִקְרָא קֹדֶשׁ יִהְיֶה לָכֶם — יוֹם תְּרוּעָה יִהְיֶה לָכֶם.',hint:'יום תרועה יהיה לכם...'},
+ ]},
+ {name:'מטות',shab:new Date(2026,6,12),aliyot:[
+  {ref:'במדבר ל:ג',text:'אִישׁ כִּי יִדֹּר נֶדֶר לַיהוָה אוֹ הִשָּׁבַע שְׁבֻעָה לֶאְסֹר אִסָּר עַל נַפְשׁוֹ — לֹא יַחֵל דְּבָרוֹ כְּכָל הַיֹּצֵא מִפִּיו יַעֲשֶׂה.',hint:'לא יחל דברו...'},
+  {ref:'במדבר לא:ג',text:'הֵחָלְצוּ מֵאִתְּכֶם אֲנָשִׁים לַצָּבָא וְיִהְיוּ עַל מִדְיָן לָתֵת נִקְמַת יְהוָה בְּמִדְיָן.',hint:'החלצו מאתכם אנשים לצבא...'},
+  {ref:'במדבר לא:כה',text:'וַיֹּאמֶר יְהוָה אֶל מֹשֶׁה לֵּאמֹר שָׂא אֵת רֹאשׁ מַלְקוֹחַ הַשְּׁבִי.',hint:'שא את ראש מלקוח השבי...'},
+  {ref:'במדבר לב:ה',text:'וַיֹּאמְרוּ אִם מָצָאנוּ חֵן בְּעֵינֶיךָ יֻתַּן אֶת הָאָרֶץ הַזֹּאת לַעֲבָדֶיךָ לַאֲחֻזָּה.',hint:'אם מצאנו חן בעיניך...'},
+  {ref:'במדבר לב:יז',text:'וַאֲנַחְנוּ נֵחָלֵץ חֻשִׁים לִפְנֵי בְּנֵי יִשְׂרָאֵל עַד אֲשֶׁר אִם הֲבִיאֹנֻם אֶל מְקוֹמָם.',hint:'ואנחנו נחלץ חושים לפני בני ישראל...'},
+  {ref:'במדבר לב:כט',text:'אִם יַעַבְרוּ בְנֵי גָד וּבְנֵי רְאוּבֵן אִתְּכֶם אֶת הַיַּרְדֵּן — וְנָתַתֶּם לָהֶם אֶת אֶרֶץ הַגִּלְעָד לַאֲחֻזָּה.',hint:'אם יעברו בני גד ובני ראובן...'},
+  {ref:'במדבר לב:לב',text:'אֲנַחְנוּ נַעֲבֹר חֲלוּצִים לִפְנֵי יְהוָה אֶרֶץ כְּנָעַן וְאִתָּנוּ אֲחֻזַּת נַחֲלָתֵנוּ מֵעֵבֶר לַיַּרְדֵּן.',hint:'אנחנו נעבור חלוצים לפני ה׳...'},
+ ]},
+ {name:'מסעי',shab:new Date(2026,6,19),aliyot:[
+  {ref:'במדבר לג:א',text:'אֵלֶּה מַסְעֵי בְנֵי יִשְׂרָאֵל אֲשֶׁר יָצְאוּ מֵאֶרֶץ מִצְרַיִם לְצִבְאֹתָם בְּיַד מֹשֶׁה וְאַהֲרֹן.',hint:'אלה מסעי בני ישראל...'},
+  {ref:'במדבר לג:נ',text:'וַיְדַבֵּר יְהוָה אֶל מֹשֶׁה בְּעַרְבֹת מוֹאָב עַל יַרְדֵּן יְרֵחוֹ לֵאמֹר.',hint:'וידבר ה׳ אל משה בערבות מואב...'},
+  {ref:'במדבר לד:ב',text:'כִּי אַתֶּם בָּאִים אֶל הָאָרֶץ כְּנָעַן זֹאת הָאָרֶץ אֲשֶׁר תִּפֹּל לָכֶם בְּנַחֲלָה.',hint:'כי אתם באים אל ארץ כנען...'},
+  {ref:'במדבר לה:ב',text:'צַו אֶת בְּנֵי יִשְׂרָאֵל וְנָתְנוּ לַלְוִיִּם מִנַּחֲלַת אֲחֻזָּתָם עָרִים לָשָׁבֶת.',hint:'ונתנו ללויים ערים לשבת...'},
+  {ref:'במדבר לה:יא',text:'וְהִקְרִיתֶם לָכֶם עָרִים עָרֵי מִקְלָט תִּהְיֶינָה לָכֶם — וְנָס שָׁמָּה רֹצֵחַ מַכֵּה נֶפֶשׁ בִּשְׁגָגָה.',hint:'ערי מקלט תהיינה לכם...'},
+  {ref:'במדבר לה:לג',text:'וְלֹא תַחֲנִיפוּ אֶת הָאָרֶץ אֲשֶׁר אַתֶּם בָּהּ כִּי הַדָּם הוּא יַחֲנִיף אֶת הָאָרֶץ.',hint:'ולא תחניפו את הארץ...'},
+  {ref:'במדבר לו:ו',text:'זֶה הַדָּבָר אֲשֶׁר צִוָּה יְהוָה לִבְנוֹת צְלָפְחָד לֵאמֹר לַטּוֹב בְּעֵינֵיהֶם תִּהְיֶינָה לְנָשִׁים.',hint:'לטוב בעיניהם תהיינה לנשים...'},
+ ]},
+ {name:'דברים',shab:new Date(2026,6,26),aliyot:[
+  {ref:'דברים א:א',text:'אֵלֶּה הַדְּבָרִים אֲשֶׁר דִּבֶּר מֹשֶׁה אֶל כָּל יִשְׂרָאֵל בְּעֵבֶר הַיַּרְדֵּן.',hint:'אלה הדברים אשר דיבר משה...'},
+  {ref:'דברים א:יד',text:'וַתַּעֲנוּ אֹתִי וַתֹּאמְרוּ טוֹב הַדָּבָר אֲשֶׁר דִּבַּרְתָּ לַעֲשׂוֹת.',hint:'טוב הדבר אשר דברת...'},
+  {ref:'דברים א:כב',text:'וַתִּקְרְבוּן אֵלַי כֻּלְּכֶם וַתֹּאמְרוּ נִשְׁלְחָה אֲנָשִׁים לְפָנֵינוּ וְיַחְפְּרוּ לָנוּ אֶת הָאָרֶץ.',hint:'נשלחה אנשים לפנינו...'},
+  {ref:'דברים א:לב',text:'וּבַדָּבָר הַזֶּה אֵינְכֶם מַאֲמִינִם בַּיהוָה אֱלֹהֵיכֶם הַהֹלֵךְ לִפְנֵיכֶם בַּדֶּרֶךְ.',hint:'אינכם מאמינים בה׳ אלהיכם...'},
+  {ref:'דברים ב:ז',text:'כִּי יְהוָה אֱלֹהֶיךָ בֵּרַכְךָ בְּכֹל מַעֲשֵׂה יָדֶךָ — יָדַע לֶכְתְּךָ אֶת הַמִּדְבָּר הַגָּדֹל הַזֶּה.',hint:'ה׳ אלהיך ברכך בכל מעשה ידך...'},
+  {ref:'דברים ב:לא',text:'רְאֵה הַחִלֹּתִי תֵּת לְפָנֶיךָ אֶת סִיחֹן וְאַרְצוֹ הָחֵל רָשׁ לָרֶשֶׁת אֶת אַרְצוֹ.',hint:'ראה החילותי תת לפניך את סיחון...'},
+  {ref:'דברים ג:כג',text:'וָאֶתְחַנַּן אֶל יְהוָה בָּעֵת הַהִוא לֵאמֹר — אֲדֹנָי יְהוִה אַתָּה הַחִלּוֹתָ לְהַרְאוֹת אֶת עַבְדְּךָ אֶת גָּדְלְךָ.',hint:'ואתחנן אל ה׳ בעת ההיא...'},
+ ]},
+ {name:'ואתחנן',shab:new Date(2026,7,2),aliyot:[
+  {ref:'דברים ג:כג',text:'וָאֶתְחַנַּן אֶל יְהוָה בָּעֵת הַהִוא לֵאמֹר — אֲדֹנָי יְהוִה אַתָּה הַחִלּוֹתָ לְהַרְאוֹת אֶת עַבְדְּךָ אֶת גָּדְלְךָ.',hint:'ואתחנן אל ה׳ בעת ההיא...'},
+  {ref:'דברים ד:ז',text:'כִּי מִי גוֹי גָּדוֹל אֲשֶׁר לוֹ אֱלֹהִים קְרֹבִים אֵלָיו כַּיהוָה אֱלֹהֵינוּ בְּכָל קָרְאֵנוּ אֵלָיו.',hint:'כי מי גוי גדול...'},
+  {ref:'דברים ד:לב',text:'כִּי שְׁאַל נָא לְיָמִים רִאשֹׁנִים אֲשֶׁר הָיוּ לְפָנֶיךָ — הֲנִהְיָה כַּדָּבָר הַגָּדוֹל הַזֶּה.',hint:'שאל נא לימים ראשונים...'},
+  {ref:'דברים ו:ד',text:'שְׁמַע יִשְׂרָאֵל יְהוָה אֱלֹהֵינוּ יְהוָה אֶחָד.',hint:'שמע ישראל ה׳ אלהינו ה׳ אחד...'},
+  {ref:'דברים ו:יח',text:'וְעָשִׂיתָ הַיָּשָׁר וְהַטּוֹב בְּעֵינֵי יְהוָה לְמַעַן יִיטַב לָךְ וּבָאתָ וְיָרַשְׁתָּ אֶת הָאָרֶץ הַטֹּבָה.',hint:'ועשית הישר והטוב...'},
+  {ref:'דברים ז:ו',text:'כִּי עַם קָדוֹשׁ אַתָּה לַיהוָה אֱלֹהֶיךָ — בְּךָ בָּחַר יְהוָה אֱלֹהֶיךָ לִהְיוֹת לוֹ לְעַם סְגֻלָּה.',hint:'כי עם קדוש אתה לה׳...'},
+  {ref:'דברים ז:יב',text:'וְהָיָה עֵקֶב תִּשְׁמְעוּן אֵת הַמִּשְׁפָּטִים הָאֵלֶּה — וְשָׁמַר יְהוָה אֱלֹהֶיךָ לְךָ אֶת הַבְּרִית.',hint:'והיה עקב תשמעון...'},
+ ]},
+ {name:'עקב',shab:new Date(2026,7,9),aliyot:[
+  {ref:'דברים ז:יב',text:'וְהָיָה עֵקֶב תִּשְׁמְעוּן אֵת הַמִּשְׁפָּטִים הָאֵלֶּה וְשָׁמַר יְהוָה אֱלֹהֶיךָ לְךָ אֶת הַבְּרִית.',hint:'והיה עקב תשמעון...'},
+  {ref:'דברים ח:ג',text:'לֹא עַל הַלֶּחֶם לְבַדּוֹ יִחְיֶה הָאָדָם כִּי עַל כָּל מוֹצָא פִי יְהוָה יִחְיֶה הָאָדָם.',hint:'לא על הלחם לבדו יחיה האדם...'},
+  {ref:'דברים ט:ד',text:'אַל תֹּאמַר בִּלְבָבְךָ בַּהֲדֹף יְהוָה אֱלֹהֶיךָ אֹתָם מִלְּפָנֶיךָ לֵאמֹר בְּצִדְקָתִי הֱבִיאַנִי יְהוָה לָרֶשֶׁת אֶת הָאָרֶץ.',hint:'אל תאמר בצדקתי...'},
+  {ref:'דברים י:יב',text:'וְעַתָּה יִשְׂרָאֵל מָה יְהוָה אֱלֹהֶיךָ שֹׁאֵל מֵעִמָּךְ כִּי אִם לְיִרְאָה אֶת יְהוָה אֱלֹהֶיךָ.',hint:'מה ה׳ אלהיך שואל מעמך...'},
+  {ref:'דברים י:יז',text:'כִּי יְהוָה אֱלֹהֵיכֶם הוּא אֱלֹהֵי הָאֱלֹהִים וַאֲדֹנֵי הָאֲדֹנִים הָאֵל הַגָּדֹל הַגִּבֹּר וְהַנּוֹרָא.',hint:'אלהי האלהים ואדוני האדונים...'},
+  {ref:'דברים יא:יג',text:'וְהָיָה אִם שָׁמֹעַ תִּשְׁמְעוּ אֶל מִצְוֹתַי אֲשֶׁר אָנֹכִי מְצַוֶּה אֶתְכֶם הַיּוֹם לְאַהֲבָה אֶת יְהוָה.',hint:'והיה אם שמוע תשמעו...'},
+  {ref:'דברים יא:כב',text:'כִּי אִם שָׁמֹר תִּשְׁמְרוּן אֶת כָּל הַמִּצְוָה הַזֹּאת לְאַהֲבָה אֶת יְהוָה אֱלֹהֵיכֶם לָלֶכֶת בְּכָל דְּרָכָיו.',hint:'שמור תשמרון את כל המצוה...'},
+ ]},
+ {name:'ראה',shab:new Date(2026,7,16),aliyot:[
+  {ref:'דברים יא:כו',text:'רְאֵה אָנֹכִי נֹתֵן לִפְנֵיכֶם הַיּוֹם בְּרָכָה וּקְלָלָה.',hint:'ראה אנכי נותן לפניכם...'},
+  {ref:'דברים יב:כ',text:'כִּי יַרְחִיב יְהוָה אֱלֹהֶיךָ אֶת גְּבֻלְךָ כַּאֲשֶׁר דִּבֶּר לָךְ וְאָמַרְתָּ אֹכְלָה בָשָׂר.',hint:'כי ירחיב ה׳ אלהיך את גבולך...'},
+  {ref:'דברים יג:ב',text:'כִּי יָקוּם בְּקִרְבְּךָ נָבִיא אוֹ חֹלֵם חֲלוֹם וְנָתַן אֵלֶיךָ אוֹת אוֹ מוֹפֵת.',hint:'כי יקום בקרבך נביא...'},
+  {ref:'דברים יד:כב',text:'עַשֵּׂר תְּעַשֵּׂר אֵת כָּל תְּבוּאַת זַרְעֶךָ הַיֹּצֵא הַשָּׂדֶה שָׁנָה שָׁנָה.',hint:'עשר תעשר...'},
+  {ref:'דברים טו:א',text:'מִקֵּץ שֶׁבַע שָׁנִים תַּעֲשֶׂה שְׁמִטָּה.',hint:'מקץ שבע שנים שמיטה...'},
+  {ref:'דברים טו:ז',text:'כִּי יִהְיֶה בְךָ אֶבְיוֹן מֵאַחַד אַחֶיךָ — לֹא תְאַמֵּץ אֶת לְבָבְךָ וְלֹא תִקְפֹּץ אֶת יָדְךָ מֵאָחִיךָ הָאֶבְיוֹן.',hint:'לא תאמץ את לבבך...'},
+  {ref:'דברים טז:יד',text:'וְשָׂמַחְתָּ בְּחַגֶּךָ אַתָּה וּבִנְךָ וּבִתֶּךָ וְעַבְדְּךָ וַאֲמָתֶךָ וְהַלֵּוִי וְהַגֵּר וְהַיָּתוֹם וְהָאַלְמָנָה.',hint:'ושמחת בחגך...'},
+ ]},
+ {name:'שופטים',shab:new Date(2026,7,23),aliyot:[
+  {ref:'דברים טז:יח',text:'שֹׁפְטִים וְשֹׁטְרִים תִּתֶּן לְךָ בְּכָל שְׁעָרֶיךָ — וְשָׁפְטוּ אֶת הָעָם מִשְׁפַּט צֶדֶק.',hint:'שופטים ושוטרים תתן לך...'},
+  {ref:'דברים יז:יד',text:'כִּי תָבֹא אֶל הָאָרֶץ אֲשֶׁר יְהוָה אֱלֹהֶיךָ נֹתֵן לָךְ — וְאָמַרְתָּ אָשִׂימָה עָלַי מֶלֶךְ.',hint:'כי תבוא אל הארץ ואמרת אשימה עלי מלך...'},
+  {ref:'דברים יח:ט',text:'כִּי אַתָּה בָּא אֶל הָאָרֶץ אֲשֶׁר יְהוָה אֱלֹהֶיךָ נֹתֵן לָךְ לֹא תִלְמַד לַעֲשׂוֹת כְּתוֹעֲבֹת הַגּוֹיִם.',hint:'לא תלמד לעשות כתועבות הגויים...'},
+  {ref:'דברים יט:ב',text:'שָׁלֹשׁ עָרִים תַּבְדִּיל לָךְ בְּתוֹךְ אַרְצְךָ — עָרֵי מִקְלָט.',hint:'שלש ערים תבדיל לך...'},
+  {ref:'דברים כ:א',text:'כִּי תֵצֵא לַמִּלְחָמָה עַל אֹיְבֶיךָ — לֹא תִירָא מֵהֶם כִּי יְהוָה אֱלֹהֶיךָ עִמָּךְ.',hint:'כי תצא למלחמה...'},
+  {ref:'דברים כ:י',text:'כִּי תִקְרַב אֶל עִיר לְהִלָּחֵם עָלֶיהָ — וְקָרָאתָ אֵלֶיהָ לְשָׁלוֹם.',hint:'וקראת אליה לשלום...'},
+  {ref:'דברים כ:יט',text:'לֹא תַשְׁחִית אֶת עֵצָהּ לִנְדֹּחַ עָלָיו גַּרְזֶן — כִּי מִמֶּנּוּ תֹאכֵל וְאֹתוֹ לֹא תִכְרֹת.',hint:'לא תשחית את עצה...'},
+ ]},
+ {name:'כי תצא',shab:new Date(2026,7,30),aliyot:[
+  {ref:'דברים כא:י',text:'כִּי תֵצֵא לַמִּלְחָמָה עַל אֹיְבֶיךָ וּנְתָנוֹ יְהוָה אֱלֹהֶיךָ בְּיָדֶךָ.',hint:'כי תצא למלחמה...'},
+  {ref:'דברים כב:א',text:'לֹא תִרְאֶה אֶת שׁוֹר אָחִיךָ אוֹ אֶת שֵׂיוֹ נִדָּחִים וְהִתְעַלַּמְתָּ מֵהֶם — הָשֵׁב תְּשִׁיבֵם לְאָחִיךָ.',hint:'השב תשיבם לאחיך...'},
+  {ref:'דברים כב:כב',text:'כִּי יִמָּצֵא אִישׁ שֹׁכֵב עִם אִשָּׁה בְּעוּלַת בַּעַל — וּמֵתוּ גַּם שְׁנֵיהֶם.',hint:'כי ימצא איש שוכב...'},
+  {ref:'דברים כג:ח',text:'לֹא תְתַעֵב אֲדֹמִי כִּי אָחִיךָ הוּא — לֹא תְתַעֵב מִצְרִי כִּי גֵר הָיִיתָ בְאַרְצוֹ.',hint:'לא תתעב אדומי כי אחיך הוא...'},
+  {ref:'דברים כד:א',text:'כִּי יִקַּח אִישׁ אִשָּׁה וּבְעָלָהּ וְהָיָה אִם לֹא תִמְצָא חֵן בְּעֵינָיו.',hint:'כי יקח איש אשה...'},
+  {ref:'דברים כד:יז',text:'לֹא תַטֶּה מִשְׁפַּט גֵּר יָתוֹם — וְלֹא תַחֲבֹל בֶּגֶד אַלְמָנָה.',hint:'לא תטה משפט גר יתום...'},
+  {ref:'דברים כה:יז',text:'זָכוֹר אֵת אֲשֶׁר עָשָׂה לְךָ עֲמָלֵק — תִּמְחֶה אֶת זֵכֶר עֲמָלֵק לֹא תִּשְׁכָּח.',hint:'זכור את אשר עשה לך עמלק...'},
+ ]},
+ {name:'כי תבוא',shab:new Date(2026,8,6),aliyot:[
+  {ref:'דברים כו:א',text:'וְהָיָה כִּי תָבוֹא אֶל הָאָרֶץ אֲשֶׁר יְהוָה אֱלֹהֶיךָ נֹתֵן לְךָ נַחֲלָה וִירִשְׁתָּהּ.',hint:'והיה כי תבוא אל הארץ...'},
+  {ref:'דברים כו:יג',text:'וְאָמַרְתָּ לִפְנֵי יְהוָה אֱלֹהֶיךָ בִּעַרְתִּי הַקֹּדֶשׁ מִן הַבַּיִת.',hint:'בערתי הקודש מן הבית...'},
+  {ref:'דברים כז:ב',text:'וְהָיָה בַּיּוֹם אֲשֶׁר תַּעַבְרוּ אֶת הַיַּרְדֵּן — וְהֵקַמֹתָ לְךָ אֲבָנִים גְּדֹלוֹת.',hint:'והיה ביום אשר תעברו את הירדן...'},
+  {ref:'דברים כח:א',text:'וְהָיָה אִם שָׁמוֹעַ תִּשְׁמַע בְּקוֹל יְהוָה אֱלֹהֶיךָ לִשְׁמֹר לַעֲשׂוֹת אֶת כָּל מִצְוֹתָיו — וּנְתָנְךָ יְהוָה אֱלֹהֶיךָ עֶלְיוֹן.',hint:'אם שמוע תשמע בקול ה׳...'},
+  {ref:'דברים כח:טו',text:'וְהָיָה אִם לֹא תִשְׁמַע בְּקוֹל יְהוָה אֱלֹהֶיךָ לִשְׁמֹר לַעֲשׂוֹת אֶת כָּל מִצְוֹתָיו וְחֻקֹּתָיו.',hint:'אם לא תשמע בקול ה׳...'},
+  {ref:'דברים כח:מז',text:'תַּחַת אֲשֶׁר לֹא עָבַדְתָּ אֶת יְהוָה אֱלֹהֶיךָ בְּשִׂמְחָה וּבְטוּב לֵבָב.',hint:'תחת אשר לא עבדת בשמחה ובטוב לבב...'},
+  {ref:'דברים כח:סט',text:'אֵלֶּה דִבְרֵי הַבְּרִית אֲשֶׁר צִוָּה יְהוָה אֶת מֹשֶׁה לִכְרֹת אֶת בְּנֵי יִשְׂרָאֵל בְּאֶרֶץ מוֹאָב.',hint:'אלה דברי הברית...'},
+ ]},
+];
+
+function getCurrentParasha(){
+  const today=new Date();today.setHours(0,0,0,0);
+  for(let i=PARASHIYOT.length-1;i>=0;i--){
+    const p=PARASHIYOT[i];
+    const weekStart=new Date(p.shab);weekStart.setDate(weekStart.getDate()-6);
+    if(today>=weekStart)return p;
+  }
+  return PARASHIYOT[0];
+}
+function getTodayAliya(){
+  const p=getCurrentParasha();
+  const dow=new Date().getDay(); // 0=Sun,...,5=Fri,6=Sat
+  if(dow===5){return{parasha:p.name,aliyot:[p.aliyot[5],p.aliyot[6]],isFriday:true};}
+  if(dow===6){return{parasha:p.name,aliyot:[p.aliyot[6]||p.aliyot[5]],isShabbat:true};}
+  return{parasha:p.name,aliyot:[p.aliyot[dow]],aliyaNum:dow+1,isFriday:false};
+}
+
+// Fast days & special periods 5786
+function isFastDay(){const d=new Date(),y=d.getFullYear(),m=d.getMonth(),day=d.getDate();return(y===2026&&m===6&&day===1)||(y===2026&&m===6&&day===22);}
+function isTishaBAv(){const d=new Date();return d.getFullYear()===2026&&d.getMonth()===6&&d.getDate()===22;}
+function isBeinMetzarim(){const d=new Date(),y=d.getFullYear(),m=d.getMonth(),day=d.getDate();return y===2026&&m===6&&day>=1&&day<=22;}
+function isNineDays(){const d=new Date(),y=d.getFullYear(),m=d.getMonth(),day=d.getDate();return y===2026&&m===6&&day>=14&&day<=22;}
+
+// Shabbat times (Israel summer approximation)
+function isShabbatLocked(){
+  const d=new Date(),dow=d.getDay(),h=d.getHours()+d.getMinutes()/60;
+  return(dow===5&&h>=19)||(dow===6&&h<20.5);
+}
+function isMotzeiShabbat(){
+  const d=new Date(),dow=d.getDay(),h=d.getHours()+d.getMinutes()/60;
+  return dow===6&&h>=20.5&&h<24;
+}
+
 // PESUKIM FOR MEMORIZATION
 // ============================================================
 const PESUKIM=[
@@ -836,6 +999,24 @@ const CATEGORIES=[
     {id:'friend_cheer',name:'עידוד חבר שמוטרד',pts:8},
     {id:'tzedaka',name:'נתינת צדקה',pts:8},
     {id:'host_guest',name:'הכנסת אורחים',pts:10},
+    // ערב שבת
+    {id:'shabbat_clean',name:'🕯️ ניקיון / עזרה בהכנות לשבת',pts:10,fridayOnly:true},
+    {id:'shabbat_table',name:'🕯️ ערכתי שולחן שבת',pts:8,fridayOnly:true},
+    {id:'shabbat_parasha',name:'🕯️ למדתי את פרשת השבוע',pts:10,fridayOnly:true},
+  ]},
+  {id:'shabbat_report',icon:'✨',title:'דיווח שבת קודש',motzeiOnly:true,tasks:[
+    {id:'shabbat_minyan',name:'תפילה במניין בשבת',pts:15},
+    {id:'shabbat_shira',name:'שירה בסעודות שבת',pts:10},
+    {id:'shabbat_dvartorah',name:'דבר תורה בשולחן שבת',pts:12},
+    {id:'shabbat_tehillim',name:'קריאת תהילים בשבת',pts:10},
+    {id:'shabbat_limud',name:'לימוד תורה בשבת',pts:12},
+  ]},
+  {id:'fast_day',icon:'🕍',title:'ימי בין המצרים',fastOnly:true,tasks:[
+    {id:'bm_mikdash',name:'לימוד על חורבן בית המקדש',pts:15,interactive:'fastlearn',icon:'📖'},
+    {id:'bm_kinot',name:'קריאת קינות / ספר איכה',pts:12},
+    {id:'bm_halachot',name:'לימוד הלכות בין המצרים',pts:10},
+    {id:'bm_tefila',name:'תפילה מיוחדת לבניין בית המקדש',pts:10},
+    {id:'bm_teshuvah',name:'חשבון נפש ותשובה',pts:12},
   ]},
 ];
 
@@ -857,11 +1038,18 @@ function getHD(){const d=new Date();d.setHours(0,0,0,0);for(let i=HEB_MONTHS.len
 // ============================================================
 const PRAYER_WIN={shacharit:{s:5,e:9.5},mincha:{s:13,e:20},arvit:{s:20,e:30}};
 function getPrayerState(slot){if(!slot||slot==='shabbat')return 'available';const h=new Date().getHours();const hh=h<5?h+24:h;const w=PRAYER_WIN[slot];if(!w)return 'available';if(hh>=w.s&&hh<w.e)return 'current';if(hh>=w.e)return 'past';return 'future';}
-function isShabbat(){const d=new Date().getDay(),h=new Date().getHours();return d===6||(d===5&&h>=18);}
-function getSlot(){const h=new Date().getHours(),d=new Date().getDay();if(d===6||(d===5&&h>=18))return 'shabbat';if(h>=5&&h<14)return 'shacharit';if(h>=12&&h<20)return 'mincha';return 'arvit';}
-function timeBannerHTML(){const s=getSlot(),d=new Date().getDay();if(s==='shabbat')return `<div class="time-banner shabbat"><div style="font-size:24px">🕯️</div><div><div class="tb-title">${d===6?'שבת שלום! 🕯️':'ערב שבת – שבת שלום!'}</div><div class="tb-sub">${d===6?'יום מנוחה קדוש':'הכנס בזמן לקבלת שבת'}</div></div></div>`;
-const b={shacharit:{i:'🌅',t:'זמן שחרית – בוקר טוב!',s:'עכשיו זמן תפילת שחרית',c:'shacharit'},mincha:{i:'☀️',t:'זמן מנחה – אחר הצהריים',s:'אל תשכח להתפלל מנחה',c:'mincha'},arvit:{i:'🌙',t:'ערב טוב – זמן ערבית',s:'התפלל ערבית לפני השינה',c:'arvit'}}[s];
-return `<div class="time-banner ${b.c}"><div style="font-size:22px" class="pulse">${b.i}</div><div><div class="tb-title">${b.t}</div><div class="tb-sub">${b.s}</div></div></div>`;}
+function isShabbat(){return isShabbatLocked();}
+function getSlot(){const h=new Date().getHours()+new Date().getMinutes()/60,d=new Date().getDay();if(isShabbatLocked())return 'shabbat';if(h>=5&&h<14)return 'shacharit';if(h>=12&&h<20)return 'mincha';return 'arvit';}
+function timeBannerHTML(){
+  const s=getSlot(),d=new Date().getDay();
+  if(isFastDay()){const label=isTishaBAv()?'תשעה באב':'י״ז בתמוז';return`<div class="time-banner" style="background:rgba(80,30,30,0.15);border:1px solid rgba(180,60,60,0.3)"><div style="font-size:24px">🕍</div><div><div class="tb-title" style="color:#ff8080">צום מועיל! – ${label}</div><div class="tb-sub">${isTishaBAv()?'יום תשעה באב – אבלות על חורבן בית המקדש':'י״ז בתמוז – ראשית ימי בין המצרים'}</div></div></div>`;}
+  if(isMotzeiShabbat())return`<div class="time-banner shabbat"><div style="font-size:24px">✨</div><div><div class="tb-title">שבוע טוב ומבורך! ✨</div><div class="tb-sub">אל תשכח לדווח על פעילויות השבת</div></div></div>`;
+  if(isBeinMetzarim()&&!isFastDay())return`<div class="time-banner" style="background:rgba(80,60,20,0.12);border:1px solid rgba(180,140,60,0.25)"><div style="font-size:22px">🕍</div><div><div class="tb-title" style="color:#c8860a">${isNineDays()?'תשעת הימים':'שלושת השבועות'}</div><div class="tb-sub">${isNineDays()?'ימי אבל על בית המקדש — ממעטים בשמחה':'בין י״ז בתמוז לט׳ באב'}</div></div></div>`;
+  if(s==='shabbat'){const fri=d===5;return`<div class="time-banner shabbat"><div style="font-size:24px">🕯️</div><div><div class="tb-title">${fri?`ערב שבת – כניסת שבת ~19:00 🕯️`:'שבת שלום! 🕯️'}</div><div class="tb-sub">${fri?'צאת שבת מחר ~20:30':'יום מנוחה קדוש — האפליקציה תיפתח בצאת שבת'}</div></div></div>`;}
+  const b={shacharit:{i:'🌅',t:'זמן שחרית – בוקר טוב!',s:'עכשיו זמן תפילת שחרית',c:'shacharit'},mincha:{i:'☀️',t:'זמן מנחה – אחר הצהריים',s:'אל תשכח להתפלל מנחה',c:'mincha'},arvit:{i:'🌙',t:'ערב טוב – זמן ערבית',s:'התפלל ערבית לפני השינה',c:'arvit'}}[s];
+  if(d===5){const p=getCurrentParasha();return`<div class="time-banner shabbat"><div style="font-size:22px">🕯️</div><div><div class="tb-title">ערב שבת פרשת ${p.name} – כניסת שבת ~19:00</div><div class="tb-sub">צאת שבת מחר ~20:30 | למד פרשת השבוע לפני כניסת שבת!</div></div></div>`;}
+  return `<div class="time-banner ${b.c}"><div style="font-size:22px" class="pulse">${b.i}</div><div><div class="tb-title">${b.t}</div><div class="tb-sub">${b.s}</div></div></div>`;
+}
 
 // ============================================================
 // DAILY INDEX
@@ -970,7 +1158,27 @@ function renderAnnounceBanner(){
   </div>`;
 }
 function dismissAnnouncement(ts){localStorage.setItem('ak_announce_seen_'+cur(),ts);renderAnnounceBanner();}
-window.onload=function(){const c=cur();if(c==='__admin__')enterAdminMode();else if(c&&getUD(c))enterApp();};
+function checkShabbatLock(){
+  const lock=document.getElementById('shabbatLock');
+  if(!lock)return;
+  if(isShabbatLocked()){
+    lock.style.display='flex';
+    // Show exit time on Friday
+    const d=new Date(),dow=d.getDay(),h=d.getHours()+d.getMinutes()/60;
+    const el=document.getElementById('shabbatExitTime');
+    if(el){
+      if(dow===5)el.textContent='שבת נכנסת · יציאה בשעה 20:30';
+      else el.textContent='שבת יוצאת בשעה 20:30';
+    }
+  } else {
+    lock.style.display='none';
+  }
+}
+window.onload=function(){
+  checkShabbatLock();
+  setInterval(checkShabbatLock,60000);
+  const c=cur();if(c==='__admin__')enterAdminMode();else if(c&&getUD(c))enterApp();
+};
 
 // ============================================================
 // PAGES
@@ -1022,9 +1230,20 @@ function renderHome(){
 function renderTasks(dd){
   const shab=isShabbat();
   const list=document.getElementById('taskList');list.innerHTML='';
+  const isFri=new Date().getDay()===5;
+  const isMot=isMotzeiShabbat();
+  const isFast=isFastDay();
+  const isMotzei=isMot;
   CATEGORIES.forEach(cat=>{
+    // Filter whole categories by day-type flags
+    if(cat.motzeiOnly&&!isMotzei)return;
+    if(cat.fastOnly&&!isFast&&!isBeinMetzarim())return;
+    if(shab&&cat.id==='sport')return; // no sport on Shabbat
+    if(isFast&&cat.id==='sport')return; // no sport on fast days
     let tasks=cat.tasks;
     if(cat.id==='prayer')tasks=shab?tasks.filter(t=>t.timeSlot==='shabbat'||!t.timeSlot):tasks.filter(t=>t.timeSlot!=='shabbat');
+    // Friday-only tasks: show only on Friday; on other days filter them out
+    tasks=tasks.filter(t=>t.fridayOnly?isFri:true);
     const done=tasks.filter(t=>dd.checked[t.id]).length;
     const catPts=tasks.reduce((s,t)=>s+(dd.checked[t.id]?t.pts:0),0);
     const sec=document.createElement('div');sec.className='cat-section';
@@ -1057,6 +1276,7 @@ function toggleCat(id,hdr){const div=document.getElementById(id);div.classList.t
 // TASK CLICK – no uncheck, prayer lock
 // ============================================================
 function onTaskClick(t,pState){
+  if(isShabbatLocked()){showToast('🕯️ שבת שלום! האפליקציה נעולה בשבת','warn');return;}
   const un=cur();const u=getUD(un);if(!u)return;
   const dd=getDD(un);
   if(dd.checked[t.id]){showToast('✅ כבר בוצע היום!','warn');return;}
@@ -1203,28 +1423,35 @@ function openLearnModal(type,tid,pts,subject){
     }
 
   }else if(type==='pasuk'){
-    const psk=PESUKIM[dayIdx()%PESUKIM.length];
-    badge='📜';badgeText='שינון פסוק יומי';
-    document.getElementById('mTitle').textContent=psk.ref;
-    // Split into words and hide last 3
-    const words=psk.text.split(' ');
-    const visible=words.slice(0,-3).join(' ');
-    const hidden=words.slice(-3).join(' ');
-    body=`
-      <div class="modal-text" style="font-size:17px;line-height:2.1;text-align:center;font-weight:600">${psk.text}</div>
-      <div class="question-box" style="margin-top:12px">
-        <div class="question-label">📝 השלם את הפסוק</div>
-        <div style="font-size:15px;font-weight:700;line-height:2;margin-bottom:12px;color:var(--text)">${visible} <span style="color:var(--muted);font-style:italic">... (השלם 3 מילים אחרונות)</span></div>
-        <button onclick="revealPasuk(${JSON.stringify(hidden)},${pts})" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--gold),var(--orange));color:#0a0e1a;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;">אני יודע! גלה תשובה ✓</button>
-        <div id="pasukReveal" style="display:none;margin-top:10px;padding:11px;background:rgba(107,255,184,0.08);border:1.5px solid rgba(107,255,184,0.25);border-radius:10px;text-align:center;">
-          <div style="font-size:16px;font-weight:800;color:#6bffb8" id="pasukHiddenWords"></div>
-          <div style="font-size:12px;color:var(--muted);margin-top:5px">האם ידעת? לחץ למטה</div>
-        </div>
-        <div id="pasukBtns" style="display:none;margin-top:10px;display:none;">
-          <button onclick="confirmPasukYes(${pts})" style="width:48%;padding:10px;border-radius:9px;border:none;background:rgba(107,255,184,0.15);border:1.5px solid rgba(107,255,184,0.4);color:#6bffb8;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:4%">✅ ידעתי!</button>
-          <button onclick="confirmPasukNo()" style="width:48%;padding:10px;border-radius:9px;border:none;background:rgba(255,107,107,0.1);border:1.5px solid rgba(255,107,107,0.3);color:#ff8080;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">❌ לא ידעתי</button>
-        </div>
-      </div>`;
+    const aliyaData=getTodayAliya();
+    badge='📜';badgeText=`שינון פרשת ${aliyaData.parasha}`;
+    const dow=new Date().getDay();
+    const aliyaLabel=aliyaData.isFriday?'עליות ו׳–ז׳':aliyaData.isShabbat?'עלייה ז׳':`עלייה ${['א','ב','ג','ד','ה'][dow]||dow+1}׳`;
+    document.getElementById('mTitle').textContent=`פרשת ${aliyaData.parasha} – ${aliyaLabel}`;
+    body='';
+    aliyaData.aliyot.forEach((psk,idx)=>{
+      if(!psk)return;
+      const words=psk.text.split(' ');
+      const visible=words.slice(0,-3).join(' ');
+      const hidden=words.slice(-3).join(' ');
+      const label=aliyaData.isFriday?(idx===0?'עלייה ו׳':'עלייה ז׳'):'';
+      body+=`<div style="margin-bottom:${aliyaData.isFriday?'18px':'0'}">
+        ${label?`<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:4px">${label} · ${psk.ref}</div>`:`<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:4px">${psk.ref}</div>`}
+        <div class="modal-text" style="font-size:16px;line-height:2;text-align:center;font-weight:600">${psk.text}</div>
+        <div class="question-box" style="margin-top:10px">
+          <div class="question-label">📝 השלם את הפסוק</div>
+          <div style="font-size:14px;font-weight:700;line-height:2;margin-bottom:10px;color:var(--text)">${visible} <span style="color:var(--muted);font-style:italic">... (3 מילים אחרונות)</span></div>
+          <button onclick="revealPasuk(${JSON.stringify(hidden)},${idx===0?pts:0},'pasukReveal${idx}')" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--gold),var(--orange));color:#0a0e1a;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;">אני יודע! גלה תשובה ✓</button>
+          <div id="pasukReveal${idx}" style="display:none;margin-top:8px;padding:10px;background:rgba(107,255,184,0.08);border:1.5px solid rgba(107,255,184,0.25);border-radius:10px;text-align:center;">
+            <div style="font-size:15px;font-weight:800;color:#6bffb8"></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">האם ידעת?</div>
+          </div>
+          ${idx===aliyaData.aliyot.length-1?`<div id="pasukBtns" style="display:none;margin-top:10px;display:flex;gap:8px;">
+            <button onclick="confirmPasukYes(${pts})" style="flex:1;padding:10px;border-radius:9px;border:none;background:rgba(107,255,184,0.15);border:1.5px solid rgba(107,255,184,0.4);color:#6bffb8;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✅ ידעתי!</button>
+            <button onclick="confirmPasukNo()" style="flex:1;padding:10px;border-radius:9px;border:none;background:rgba(255,107,107,0.1);border:1.5px solid rgba(255,107,107,0.3);color:#ff8080;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">❌ לא ידעתי</button>
+          </div>`:''}
+        </div></div>`;
+    });
 
   }else if(type==='video'){
     const v=dailyVideo();
@@ -1383,10 +1610,11 @@ function speakText(text){
 }
 
 // ── Pasuk ──
-function revealPasuk(hidden,pts){
-  document.getElementById('pasukReveal').style.display='';
-  document.getElementById('pasukHiddenWords').textContent=hidden;
-  document.getElementById('pasukBtns').style.display='flex';
+function revealPasuk(hidden,pts,elId){
+  const el=document.getElementById(elId||'pasukReveal0');
+  if(el){el.style.display='';el.querySelector('div').textContent=hidden;}
+  const btns=document.getElementById('pasukBtns');
+  if(btns)btns.style.display='flex';
   speakText(hidden);
 }
 function confirmPasukYes(pts){
