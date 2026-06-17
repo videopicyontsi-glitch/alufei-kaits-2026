@@ -1,0 +1,11 @@
+name = "alufei-kaits-2026"
+main = "cf-worker.js"
+compatibility_date = "2024-06-01"
+
+[assets]
+directory = "./"
+not_found_handling = "none"
+
+[[kv_namespaces]]
+binding = "USERS_KV"
+id = "4fc29a1c20b74b188a7ebca07752495e"
