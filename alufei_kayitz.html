@@ -1292,7 +1292,7 @@ function renderTasks(dd){
     if(shab&&cat.id==='sport')return; // no sport on Shabbat
     if(isFast&&cat.id==='sport')return; // no sport on fast days
     let tasks=cat.tasks;
-    if(cat.id==='prayer')tasks=shab?tasks.filter(t=>t.timeSlot==='shabbat'||!t.timeSlot):tasks.filter(t=>t.timeSlot!=='shabbat');
+    if(cat.id==='prayer'){if(shab)tasks=tasks.filter(t=>t.timeSlot==='shabbat'||!t.timeSlot);else{tasks=tasks.filter(t=>t.timeSlot!=='shabbat');if(isFri)tasks=tasks.filter(t=>t.id!=='arvit');}}
     // Friday-only tasks: show only on Friday; on other days filter them out
     tasks=tasks.filter(t=>t.fridayOnly?isFri:true);
     const done=tasks.filter(t=>dd.checked[t.id]).length;
