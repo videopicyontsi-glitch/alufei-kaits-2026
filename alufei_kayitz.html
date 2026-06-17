@@ -1074,8 +1074,13 @@ async function fbSet(path, data){
 }
 async function fbGet(path){
   if(!FB_URL)return null;
-  try{const r=await fetch(`${FB_URL}/${path}.json`);return await r.json();}
-  catch(e){return null;}
+  try{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),5000);
+    const r=await fetch(`${FB_URL}/${path}.json`,{signal:ctrl.signal});
+    clearTimeout(tid);
+    return await r.json();
+  }catch(e){return null;}
 }
 async function fbGetAllUsers(){
   const data=await fbGet('ak_users');
