@@ -1063,39 +1063,30 @@ function dailyBonus(){return BONUS_POOL[dayIdx()%BONUS_POOL.length];}
 // ============================================================
 // FIREBASE CONFIG — הכנס כאן את כתובת ה-Database שלך
 // ============================================================
-// הוראות: console.firebase.google.com → צור פרויקט → Realtime Database → צור DB → העתק את ה-URL
-// דוגמה: 'https://MY-PROJECT-default-rtdb.firebaseio.com'
-const FB_URL = localStorage.getItem('ak_fb_url') || '';
+// ── Server-side storage API ──
+const API_BASE = window.location.origin;
 
-async function fbSet(path, data){
-  if(!FB_URL)return;
-  try{await fetch(`${FB_URL}/${path}.json`,{method:'PUT',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}});}
-  catch(e){console.warn('Firebase write error',e);}
-}
-async function fbGet(path){
-  if(!FB_URL)return null;
+async function serverGetAllUsers(){
   try{
     const ctrl=new AbortController();
     const tid=setTimeout(()=>ctrl.abort(),5000);
-    const r=await fetch(`${FB_URL}/${path}.json`,{signal:ctrl.signal});
+    const r=await fetch(`${API_BASE}/api/users`,{signal:ctrl.signal});
     clearTimeout(tid);
     return await r.json();
-  }catch(e){return null;}
+  }catch(e){return {};}
 }
-async function fbGetAllUsers(){
-  const data=await fbGet('ak_users');
-  return data||{};
+async function serverSyncUser(un,userData){
+  if(!un||un==='__admin__')return;
+  try{
+    await fetch(`${API_BASE}/api/users/${encodeURIComponent(un)}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(userData)
+    });
+  }catch(e){}
 }
-async function fbSyncUser(un,userData){
-  if(!FB_URL||!un||un==='__admin__')return;
-  // strip days to save bandwidth — sync only totals
-  const slim={name:userData.name,cls:userData.cls||'',totalPts:userData.totalPts||0,
-    tasksCompleted:userData.tasksCompleted||0,activeDays:userData.activeDays||0,
-    streak:userData.streak||0,lastDay:userData.lastDay||'',pass:userData.pass||''};
-  // save today's day data too
-  const tk=todayKey();
-  if(userData.days&&userData.days[tk])slim.todayData=userData.days[tk];
-  await fbSet(`ak_users/${un}`,slim);
+async function serverDeleteUser(un){
+  try{await fetch(`${API_BASE}/api/users/${encodeURIComponent(un)}`,{method:'DELETE'});}catch(e){}
 }
 
 // ============================================================
@@ -1106,7 +1097,7 @@ function saveUsers(u){localStorage.setItem('ak_users',JSON.stringify(u))}
 function cur(){return localStorage.getItem('ak_current')||''}
 function setCur(u){localStorage.setItem('ak_current',u)}
 function getUD(un){return getUsers()[un]||null}
-function saveUD(un,d){const u=getUsers();u[un]=d;saveUsers(u);fbSyncUser(un,d);}
+function saveUD(un,d){const u=getUsers();u[un]=d;saveUsers(u);serverSyncUser(un,d);}
 function todayKey(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function getDD(un){const u=getUD(un);if(!u)return{checked:{},bonusDone:false};if(!u.days)u.days={};if(!u.days[todayKey()])u.days[todayKey()]={checked:{},bonusDone:false};if(!u.days[todayKey()].checked)u.days[todayKey()].checked={};return u.days[todayKey()];}
 function saveDD(un,dd){const u=getUD(un);if(!u)return;if(!u.days)u.days={};u.days[todayKey()]=dd;saveUD(un,u);}
@@ -1143,9 +1134,6 @@ function doRegister(){
 // doLogout defined in admin section below
 function enterApp(){document.getElementById('authScreen').classList.remove('active');document.getElementById('mainScreen').classList.add('active');showPage('home');syncAnnouncement();}
 async function syncAnnouncement(){
-  const remote=await fbGet('ak_announcement');
-  if(remote&&(remote.text||remote.img))localStorage.setItem('ak_announcement',JSON.stringify(remote));
-  else if(remote===null)localStorage.removeItem('ak_announcement');
   renderAnnounceBanner();
 }
 function renderAnnounceBanner(){
@@ -1679,7 +1667,7 @@ function showAdminTab(tab){
 
 // ── Publish announcement to students ──
 function getAnnouncement(){try{return JSON.parse(localStorage.getItem('ak_announcement')||'null');}catch{return null;}}
-function setAnnouncement(a){localStorage.setItem('ak_announcement',JSON.stringify(a));fbSet('ak_announcement',a);}
+function setAnnouncement(a){localStorage.setItem('ak_announcement',JSON.stringify(a));}
 let _pendingAnnImg=undefined; // undefined=no change, null=removed, string=new data URL
 function resizeImageFile(file){
   return new Promise((resolve,reject)=>{
@@ -1725,7 +1713,7 @@ async function publishAnnouncement(){
 }
 async function deleteAnnouncement(){
   localStorage.removeItem('ak_announcement');
-  await fbSet('ak_announcement',null);
+  localStorage.removeItem('ak_announcement');
   _pendingAnnImg=undefined;
   renderPublishTab();
 }
@@ -1869,42 +1857,29 @@ async function enterAdminMode(){
   ['authScreen','mainScreen'].forEach(id=>document.getElementById(id).classList.remove('active'));
   document.getElementById('adminScreen').classList.add('active');
   document.getElementById('adminDate').textContent=`יום ${HEB_DAYS[new Date().getDay()]} · ${getHD()}`;
-  // אם יש Firebase — טען את כל המשתמשים מהענן ומזג עם הלוקאל
-  if(FB_URL){
-    document.getElementById('adminTabStudents').innerHTML='<div style="text-align:center;padding:30px;color:var(--muted)">⏳ טוען נתונים מהענן...</div>';
-    document.getElementById('adminTabStudents').style.display='';
-    try{
-      const fbUsers=await fbGetAllUsers();
-      if(fbUsers){
-        const local=getUsers();
-        // מזג: Firebase גובר על לוקאל לגבי משתמשים מרוחקים
-        Object.entries(fbUsers).forEach(([un,u])=>{
-          if(u&&u.todayData&&!u.todayData.checked)u.todayData.checked={};
-          if(!local[un]&&u&&u.name){
-            // משתמש רחוק — בנה מבנה מינימלי
-            local[un]={name:u.name,cls:u.cls||'',pass:u.pass||'',
-              totalPts:u.totalPts||0,tasksCompleted:u.tasksCompleted||0,
-              activeDays:u.activeDays||0,streak:u.streak||0,lastDay:u.lastDay||'',
-              days:u.todayData?{[todayKey()]:u.todayData}:{}};
-          } else if(local[un]&&u){
-            // עדכן נתונים כלליים אם Firebase חדש יותר
-            if((u.totalPts||0)>(local[un].totalPts||0)){local[un].totalPts=u.totalPts;}
-            if(u.todayData&&(!local[un].days||!local[un].days[todayKey()])){
-              if(!local[un].days)local[un].days={};
-              local[un].days[todayKey()]=u.todayData;
-            }
+  // טען את כל המשתמשים מהשרת ומזג עם הלוקאל
+  document.getElementById('adminTabStudents').innerHTML='<div style="text-align:center;padding:30px;color:var(--muted)">⏳ טוען נתונים מהשרת...</div>';
+  document.getElementById('adminTabStudents').style.display='';
+  try{
+    const serverUsers=await serverGetAllUsers();
+    if(serverUsers&&Object.keys(serverUsers).length>0){
+      const local=getUsers();
+      Object.entries(serverUsers).forEach(([un,u])=>{
+        if(!u||!u.name)return;
+        if(!local[un]){
+          local[un]=u;
+        } else {
+          if((u.totalPts||0)>(local[un].totalPts||0))local[un].totalPts=u.totalPts;
+          if(u.days){
+            if(!local[un].days)local[un].days={};
+            Object.assign(local[un].days, u.days);
           }
-        });
-        saveUsers(local);
-      }
-    }catch(e){console.warn('Firebase fetch error',e);}
-  }
+        }
+      });
+      saveUsers(local);
+    }
+  }catch(e){console.warn('Server fetch error',e);}
   renderAdmin();
-  // הצג כפתור הגדרת Firebase אם לא מוגדר
-  if(!FB_URL){
-    const notice=document.querySelector('.admin-notice');
-    if(notice)notice.innerHTML+='<br><br>🔴 <b>Firebase לא מחובר</b> — רק משתמשים מהמכשיר הזה מוצגים.<br><a onclick="promptFbUrl()" style="color:#f7c948;cursor:pointer;text-decoration:underline">לחץ כאן לחיבור Firebase</a>';
-  }
 }
 
 function doLogout(){
@@ -1958,8 +1933,7 @@ function adminResetToday(){
     users[un].days[k]={checked:{},bonusDone:false};
   });
   saveUsers(users);
-  // עדכן Firebase לכל משתמש
-  if(FB_URL){Object.entries(users).forEach(([un,u])=>fbSyncUser(un,u));}
+  Object.entries(users).forEach(([un,u])=>serverSyncUser(un,u));
   showToast('✅ כל המשימות של היום אופסו!','ok');
   renderAdmin();
 }
@@ -1969,8 +1943,7 @@ function adminRemoveStudent(un, name){
   const users=getUsers();
   delete users[un];
   saveUsers(users);
-  // מחק גם מ-Firebase
-  if(FB_URL)fetch(`${FB_URL}/ak_users/${un}.json`,{method:'DELETE'}).catch(()=>{});
+  serverDeleteUser(un);
   showToast(`${name} הוסר`,'warn');
   renderAdmin();
 }
