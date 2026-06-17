@@ -443,12 +443,14 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
     <div style="margin-top:12px"><button class="btn btn-outline" onclick="doLogout()">התנתקות</button></div>
   </div>
 
-  <div class="bottom-nav">
-    <button class="nav-item active" id="navHome" onclick="showPage('home')"><span class="nav-icon">🏠</span><span class="nav-label">בית</span></button>
-    <button class="nav-item" id="navLb" onclick="showPage('leaderboard')"><span class="nav-icon">🏅</span><span class="nav-label">דירוג</span></button>
-    <button class="nav-item" id="navProfile" onclick="showPage('profile')"><span class="nav-icon">👤</span><span class="nav-label">פרופיל</span></button>
+  <div class="bottom-nav" style="flex-wrap:wrap;">
+    <div style="display:flex;width:100%;">
+      <button class="nav-item active" id="navHome" onclick="showPage('home')" style="flex:1;"><span class="nav-icon">🏠</span><span class="nav-label">בית</span></button>
+      <button class="nav-item" id="navLb" onclick="showPage('leaderboard')" style="flex:1;"><span class="nav-icon">🏅</span><span class="nav-label">דירוג</span></button>
+      <button class="nav-item" id="navProfile" onclick="showPage('profile')" style="flex:1;"><span class="nav-icon">👤</span><span class="nav-label">פרופיל</span></button>
+    </div>
+    <div style="width:100%;text-align:center;padding:2px 0 3px;font-size:9px;color:rgba(180,150,80,0.65);letter-spacing:0.3px;border-top:1px solid rgba(180,140,60,0.1);">כל הזכויות שמורות לנתנאל הזה · רעיונות גדולים לעסקים קטנים</div>
   </div>
-  <div style="text-align:center;padding:4px 0 2px;font-size:10px;color:rgba(180,150,80,0.7);letter-spacing:0.3px;background:rgba(10,14,26,0.6);">כל הזכויות שמורות לנתנאל הזה · רעיונות גדולים לעסקים קטנים</div>
 </div>
 
 <!-- LEARN MODAL -->
