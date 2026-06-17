@@ -1260,7 +1260,7 @@ function showAnnouncePopup(a){
   ov.innerHTML=`<div style="background:linear-gradient(160deg,#141c30,#1e2a45);border:1.5px solid rgba(247,201,72,0.4);border-radius:18px;padding:22px 20px;max-width:380px;width:100%;position:relative;max-height:80vh;overflow-y:auto;">
     <div style="font-size:13px;font-weight:800;color:#f7c948;margin-bottom:12px;text-align:center;">📢 הודעה חשובה</div>
     ${a.img?`<img src="${a.img}" style="max-width:100%;border-radius:10px;margin-bottom:12px;display:block;">`:''}
-    ${a.text?`<div style="font-size:14px;white-space:pre-wrap;line-height:1.6;text-align:center;">${a.text.replace(/</g,'&lt;')}</div>`:''}
+    ${a.text?`<div style="font-size:14px;white-space:pre-wrap;line-height:1.6;text-align:center;color:#f0e8d0;">${a.text.replace(/</g,'&lt;')}</div>`:''}
     <button onclick="closeAnnouncePopup(${a.ts})" style="width:100%;margin-top:18px;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#f7c948,#ff8c42);color:#1a0e02;font-size:14px;font-weight:800;cursor:pointer;">הבנתי ✓</button>
   </div>`;
   document.body.appendChild(ov);
