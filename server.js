@@ -8,6 +8,10 @@ app.use(cors());
 app.use(express.json({limit:'5mb'}));
 app.use(express.static(__dirname, {etag: false, lastModified: false, setHeaders: (res) => res.setHeader('Cache-Control', 'no-store')}));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'alufei_kayitz.html'));
+});
+
 const DATA_FILE = path.join(__dirname, 'users_data.json');
 
 function readData() {
