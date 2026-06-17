@@ -319,10 +319,21 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
         <input type="hidden" id="regClass" value="">
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
           <div style="width:100%;font-size:11px;color:#999;margin-bottom:2px;">כיתה ז׳</div>
-          ${["ז'1","ז'2","ז'3","ז'4","ז'5","ז'6"].map(c=>`<button type="button" onclick="selectClass(this,'${c}')" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">${c}</button>`).join('')}
+          <button type="button" onclick="selectClass(this,&quot;ז'1&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ז'1</button>
+          <button type="button" onclick="selectClass(this,&quot;ז'2&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ז'2</button>
+          <button type="button" onclick="selectClass(this,&quot;ז'3&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ז'3</button>
+          <button type="button" onclick="selectClass(this,&quot;ז'4&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ז'4</button>
+          <button type="button" onclick="selectClass(this,&quot;ז'5&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ז'5</button>
+          <button type="button" onclick="selectClass(this,&quot;ז'6&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ז'6</button>
           <div style="width:100%;font-size:11px;color:#999;margin-top:4px;margin-bottom:2px;">כיתה ח׳</div>
-          ${["ח'1","ח'2","ח'3","ח'4","ח'5","ח'6"].map(c=>`<button type="button" onclick="selectClass(this,'${c}')" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">${c}</button>`).join('')}
-          <button type="button" onclick="selectClass(this,'אחר')" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;margin-top:4px;">אחר</button>
+          <button type="button" onclick="selectClass(this,&quot;ח'1&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ח'1</button>
+          <button type="button" onclick="selectClass(this,&quot;ח'2&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ח'2</button>
+          <button type="button" onclick="selectClass(this,&quot;ח'3&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ח'3</button>
+          <button type="button" onclick="selectClass(this,&quot;ח'4&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ח'4</button>
+          <button type="button" onclick="selectClass(this,&quot;ח'5&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ח'5</button>
+          <button type="button" onclick="selectClass(this,&quot;ח'6&quot;)" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">ח'6</button>
+          <div style="width:100%;margin-top:4px;"></div>
+          <button type="button" onclick="selectClass(this,'אחר')" style="padding:7px 12px;border-radius:8px;border:1.5px solid rgba(180,140,60,0.35);background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;">אחר</button>
         </div>
       </div>
       <div class="field"><label>סיסמה</label><input id="regPass" type="password" placeholder="לפחות 4 תווים"></div>
