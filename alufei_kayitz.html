@@ -883,13 +883,42 @@ function isBeinMetzarim(){const d=new Date(),y=d.getFullYear(),m=d.getMonth(),da
 function isNineDays(){const d=new Date(),y=d.getFullYear(),m=d.getMonth(),day=d.getDate();return y===2026&&m===6&&day>=14&&day<=22;}
 
 // Shabbat times (Israel summer approximation)
+const SHABBAT_TIMES=[
+  {fri:'2026-06-19',candle:'19:24',havdalah:'20:24'},
+  {fri:'2026-06-26',candle:'19:24',havdalah:'20:24'},
+  {fri:'2026-07-03',candle:'19:23',havdalah:'20:23'},
+  {fri:'2026-07-10',candle:'19:20',havdalah:'20:20'},
+  {fri:'2026-07-17',candle:'19:16',havdalah:'20:16'},
+  {fri:'2026-07-24',candle:'19:10',havdalah:'20:10'},
+  {fri:'2026-07-31',candle:'19:03',havdalah:'20:03'},
+  {fri:'2026-08-07',candle:'18:54',havdalah:'19:54'},
+  {fri:'2026-08-14',candle:'18:44',havdalah:'19:44'},
+  {fri:'2026-08-21',candle:'18:33',havdalah:'19:33'},
+  {fri:'2026-08-28',candle:'18:21',havdalah:'19:21'},
+  {fri:'2026-09-04',candle:'18:09',havdalah:'19:09'},
+];
+function _shabbatTimeH(str){const[h,m]=str.split(':').map(Number);return h+m/60;}
+function getShabbatTimes(){
+  const now=new Date(),dow=now.getDay();
+  if(dow!==5&&dow!==6)return null;
+  const fri=new Date(now);
+  if(dow===6)fri.setDate(fri.getDate()-1);
+  const friStr=fri.getFullYear()+'-'+String(fri.getMonth()+1).padStart(2,'0')+'-'+String(fri.getDate()).padStart(2,'0');
+  return SHABBAT_TIMES.find(r=>r.fri===friStr)||SHABBAT_TIMES.reduce((a,b)=>Math.abs(new Date(b.fri)-new Date(friStr))<Math.abs(new Date(a.fri)-new Date(friStr))?b:a);
+}
 function isShabbatLocked(){
-  const d=new Date(),dow=d.getDay(),h=d.getHours()+d.getMinutes()/60;
-  return(dow===5&&h>=19)||(dow===6&&h<20.5);
+  const now=new Date(),dow=now.getDay(),h=now.getHours()+now.getMinutes()/60;
+  const t=getShabbatTimes();
+  if(!t)return false;
+  if(dow===5)return h>=_shabbatTimeH(t.candle);
+  if(dow===6)return h<_shabbatTimeH(t.havdalah);
+  return false;
 }
 function isMotzeiShabbat(){
-  const d=new Date(),dow=d.getDay(),h=d.getHours()+d.getMinutes()/60;
-  return dow===6&&h>=20.5&&h<24;
+  const now=new Date(),dow=now.getDay(),h=now.getHours()+now.getMinutes()/60;
+  if(dow!==6)return false;
+  const t=getShabbatTimes();
+  return t?h>=_shabbatTimeH(t.havdalah)&&h<24:false;
 }
 
 // PESUKIM FOR MEMORIZATION
@@ -1107,9 +1136,9 @@ function timeBannerHTML(){
   if(isFastDay()){const label=isTishaBAv()?'תשעה באב':'י״ז בתמוז';return`<div class="time-banner" style="background:rgba(80,30,30,0.15);border:1px solid rgba(180,60,60,0.3)"><div style="font-size:24px">🕍</div><div><div class="tb-title" style="color:#ff8080">צום מועיל! – ${label}</div><div class="tb-sub">${isTishaBAv()?'יום תשעה באב – אבלות על חורבן בית המקדש':'י״ז בתמוז – ראשית ימי בין המצרים'}</div></div></div>`;}
   if(isMotzeiShabbat())return`<div class="time-banner shabbat"><div style="font-size:24px">✨</div><div><div class="tb-title">שבוע טוב ומבורך! ✨</div><div class="tb-sub">אל תשכח לדווח על פעילויות השבת</div></div></div>`;
   if(isBeinMetzarim()&&!isFastDay())return`<div class="time-banner" style="background:rgba(80,60,20,0.12);border:1px solid rgba(180,140,60,0.25)"><div style="font-size:22px">🕍</div><div><div class="tb-title" style="color:#c8860a">${isNineDays()?'תשעת הימים':'שלושת השבועות'}</div><div class="tb-sub">${isNineDays()?'ימי אבל על בית המקדש — ממעטים בשמחה':'בין י״ז בתמוז לט׳ באב'}</div></div></div>`;
-  if(s==='shabbat'){const fri=d===5;return`<div class="time-banner shabbat"><div style="font-size:24px">🕯️</div><div><div class="tb-title">${fri?`ערב שבת – כניסת שבת ~19:00 🕯️`:'שבת שלום! 🕯️'}</div><div class="tb-sub">${fri?'צאת שבת מחר ~20:30':'יום מנוחה קדוש — האפליקציה תיפתח בצאת שבת'}</div></div></div>`;}
+  if(s==='shabbat'){const fri=d===5;const st=getShabbatTimes();const hav=st?st.havdalah:'20:30';const can=st?st.candle:'~19:00';return`<div class="time-banner shabbat"><div style="font-size:24px">🕯️</div><div><div class="tb-title">${fri?`ערב שבת – כניסת שבת ${can} 🕯️`:'שבת שלום! 🕯️'}</div><div class="tb-sub">${fri?`צאת שבת מחר ${hav}`:'יום מנוחה קדוש — האפליקציה תיפתח בצאת שבת'}</div></div></div>`;}
   const b={shacharit:{i:'🌅',t:'זמן שחרית – בוקר טוב!',s:'עכשיו זמן תפילת שחרית',c:'shacharit'},mincha:{i:'☀️',t:'זמן מנחה – אחר הצהריים',s:'אל תשכח להתפלל מנחה',c:'mincha'},arvit:{i:'🌙',t:'ערב טוב – זמן ערבית',s:'התפלל ערבית לפני השינה',c:'arvit'}}[s];
-  if(d===5){const p=getCurrentParasha();return`<div class="time-banner shabbat"><div style="font-size:22px">🕯️</div><div><div class="tb-title">ערב שבת פרשת ${p.name} – כניסת שבת ~19:00</div><div class="tb-sub">צאת שבת מחר ~20:30 | למד פרשת השבוע לפני כניסת שבת!</div></div></div>`;}
+  if(d===5){const p=getCurrentParasha();const st=getShabbatTimes();const can=st?st.candle:'~19:00';const hav=st?st.havdalah:'~20:30';return`<div class="time-banner shabbat"><div style="font-size:22px">🕯️</div><div><div class="tb-title">ערב שבת פרשת ${p.name} – כניסת שבת ${can}</div><div class="tb-sub">צאת שבת מחר ${hav} | למד פרשת השבוע לפני כניסת שבת!</div></div></div>`;}
   return `<div class="time-banner ${b.c}"><div style="font-size:22px" class="pulse">${b.i}</div><div><div class="tb-title">${b.t}</div><div class="tb-sub">${b.s}</div></div></div>`;
 }
 
@@ -1251,8 +1280,10 @@ function checkShabbatLock(){
     const d=new Date(),dow=d.getDay(),h=d.getHours()+d.getMinutes()/60;
     const el=document.getElementById('shabbatExitTime');
     if(el){
-      if(dow===5)el.textContent='שבת נכנסת · יציאה בשעה 20:30';
-      else el.textContent='שבת יוצאת בשעה 20:30';
+      const st=getShabbatTimes();
+      const hav=st?st.havdalah:'20:30';
+      if(dow===5)el.textContent=`שבת נכנסת · יציאה בשעה ${hav}`;
+      else el.textContent=`שבת יוצאת בשעה ${hav}`;
     }
   } else {
     lock.style.display='none';
@@ -2068,6 +2099,26 @@ function adminBackupData(){
   showToast('✅ קובץ הגיבוי הורד!','ok');
 }
 
+function adminRestoreBackup(input){
+  const file=input.files&&input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.users||typeof data.users!=='object')throw new Error('קובץ לא תקין');
+      if(!confirm(`האם לשחזר גיבוי מתאריך ${new Date(data.exportedAt).toLocaleString('he-IL')}?\nהפעולה תדרוס את כל הנתונים הנוכחיים!`)){input.value='';return;}
+      saveUsers(data.users);
+      Object.entries(data.users).forEach(([un,u])=>serverSyncUser(un,u));
+      showToast('✅ הגיבוי שוחזר בהצלחה!','ok');
+      renderAdmin();
+    }catch(err){
+      showToast('❌ שגיאה בקריאת הקובץ: '+err.message,'warn');
+    }
+    input.value='';
+  };
+  reader.readAsText(file);
+}
 function adminResetToday(){
   if(!confirm('איפוס כל המשימות של היום לכל המשתמשים?\nהנקודות הכוללות לא ישתנו.'))return;
   const users=getUsers();
@@ -2126,7 +2177,13 @@ function renderAdmin(){
       <div class="admin-stat"><div class="as-val">${activeToday}</div><div class="as-lbl">פעילים היום</div></div>
       <div class="admin-stat"><div class="as-val">${totalTasksToday}</div><div class="as-lbl">משימות היום</div></div>
     </div>
-    <button onclick="adminBackupData()" style="width:100%;padding:12px;border-radius:11px;border:1.5px solid rgba(107,255,184,0.4);background:rgba(107,255,184,0.1);color:#6bffb8;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;">💾 גיבוי כל הנתונים (הורדת קובץ)</button>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <button onclick="adminBackupData()" style="flex:1;padding:12px;border-radius:11px;border:1.5px solid rgba(107,255,184,0.4);background:rgba(107,255,184,0.1);color:#6bffb8;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">💾 הורדת גיבוי</button>
+      <label style="flex:1;padding:12px;border-radius:11px;border:1.5px solid rgba(107,184,255,0.4);background:rgba(107,184,255,0.1);color:#6bb8ff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;">
+        📂 העלאת גיבוי
+        <input type="file" accept=".json" onchange="adminRestoreBackup(this)" style="display:none;">
+      </label>
+    </div>
     <button onclick="adminResetToday()" style="width:100%;padding:12px;border-radius:11px;border:1.5px solid rgba(255,107,107,0.4);background:rgba(255,107,107,0.1);color:#ff8080;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:12px;">🔄 איפוס כל משימות היום לכל התלמידים</button>
     <div class="admin-section-title">🏅 דירוג תלמידים</div>`;
 
