@@ -1,0 +1,10 @@
+node_modules/
+.wwebjs_auth/
+.wwebjs_cache/
+*.mp4
+*.pptx
+*.docx
+*.zip
+tutorial_shots/
+tutorial_video/
+.DS_Store
