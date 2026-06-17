@@ -315,7 +315,7 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
       <div class="field"><label>שם מלא</label><input id="regName" type="text" placeholder="שם פרטי ומשפחה"></div>
       <div class="field"><label>שם משתמש</label><input id="regUser" type="text" placeholder="ייחודי, ללא רווחים"></div>
       <div class="field"><label>כיתה</label>
-        <select id="regClass"><option value="">בחר כיתה</option><option>ז'1</option><option>ז'2</option><option>ז'3</option><option>ז'4</option><option>ז'5</option><option>ז'6</option><option>אחר</option></select>
+        <select id="regClass"><option value="">בחר כיתה</option><option>ז'1</option><option>ז'2</option><option>ז'3</option><option>ז'4</option><option>ז'5</option><option>ז'6</option><option>ח'1</option><option>ח'2</option><option>ח'3</option><option>ח'4</option><option>ח'5</option><option>ח'6</option><option>אחר</option></select>
       </div>
       <div class="field"><label>סיסמה</label><input id="regPass" type="password" placeholder="לפחות 4 תווים"></div>
       <button class="btn btn-gold mt8" onclick="doRegister()">הצטרפות לאתגר! 🏆</button>
@@ -344,10 +344,12 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
       <button class="admin-tab active" id="atab1" onclick="showAdminTab('students')">👥 תלמידים</button>
       <button class="admin-tab" id="atab2" onclick="showAdminTab('graphs')">📊 גרפים</button>
       <button class="admin-tab" id="atab3" onclick="showAdminTab('taskpts')">⚙️ נקודות משימות</button>
+      <button class="admin-tab" id="atab4" onclick="showAdminTab('publish')">📢 פרסום</button>
     </div>
     <div id="adminTabStudents"></div>
     <div id="adminTabGraphs" style="display:none"></div>
     <div id="adminTabTaskPts" style="display:none"></div>
+    <div id="adminTabPublish" style="display:none"></div>
   </div>
 </div>
 
@@ -363,6 +365,7 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
   <div class="hdate-bar" id="hdateBar">טוען...</div>
 
   <div id="pageHome" class="content">
+    <div id="announceBanner"></div>
     <div id="timeBanner"></div>
     <div class="progress-card">
       <div style="font-size:12px;color:var(--muted)">התקדמות היום</div>
@@ -469,6 +472,8 @@ const MISH=[
   {r:'אבות א׳:א׳',s:'שרשרת המסורה',t:'מֹשֶׁה קִבֵּל תּוֹרָה מִסִּינַי, וּמְסָרָהּ לִיהוֹשֻׁעַ, וִיהוֹשֻׁעַ לִזְקֵנִים, וּזְקֵנִים לִנְבִיאִים, וּנְבִיאִים מְסָרוּהָ לְאַנְשֵׁי כְנֶסֶת הַגְּדוֹלָה. הֵם אָמְרוּ שְׁלֹשָׁה דְבָרִים: הֱווּ מְתוּנִים בַּדִּין, וְהַעֲמִידוּ תַלְמִידִים הַרְבֵּה, וַעֲשׂוּ סְיָג לַתּוֹרָה.'},
   {r:'אבות א׳:ב׳',s:'על שלושה דברים העולם עומד',t:'שִׁמְעוֹן הַצַּדִּיק הָיָה אוֹמֵר: עַל שְׁלֹשָׁה דְבָרִים הָעוֹלָם עוֹמֵד — עַל הַתּוֹרָה, וְעַל הָעֲבוֹדָה, וְעַל גְּמִילוּת חֲסָדִים.'},
   {r:'אבות א׳:ג׳',s:'עבודה לשמה',t:'אַנְטִיגְנוֹס אוֹמֵר: אַל תִּהְיוּ כַעֲבָדִים הַמְשַׁמְּשִׁין עַל מְנָת לְקַבֵּל פְּרָס, אֶלָּא הֱווּ כַּעֲבָדִים הַמְשַׁמְּשִׁין שֶׁלֹּא עַל מְנָת לְקַבֵּל פְּרָס, וִיהִי מוֹרָא שָׁמַיִם עֲלֵיכֶם.'},
+  {r:'אבות א׳:ד׳',s:'יהי ביתך בית ועד לחכמים',t:'יוֹסֵי בֶּן יוֹעֶזֶר אִישׁ צְרֵדָה וְיוֹסֵי בֶּן יוֹחָנָן אִישׁ יְרוּשָׁלַיִם אוֹמְרִים: יְהִי בֵיתְךָ בֵּית וַעַד לַחֲכָמִים, וֶהֱוֵי מִתְאַבֵּק בַּעֲפַר רַגְלֵיהֶם, וֶהֱוֵי שׁוֹתֶה בְצָמָא אֶת דִּבְרֵיהֶם.'},
+  {r:'אבות א׳:ה׳',s:'יהי ביתך פתוח לרווחה',t:'יוֹסֵי בֶּן יוֹחָנָן אִישׁ יְרוּשָׁלַיִם אוֹמֵר: יְהִי בֵיתְךָ פָּתוּחַ לָרְוָחָה, וְיִהְיוּ עֲנִיִּים בְּנֵי בֵיתֶךָ, וְאַל תַּרְבֶּה שִׂיחָה עִם הָאִשָּׁה.'},
   {r:'אבות א׳:ו׳',s:'עשה לך רב וקנה לך חבר',t:'יְהוֹשֻׁעַ בֶּן פְּרַחְיָה אוֹמֵר: עֲשֵׂה לְךָ רַב, וּקְנֵה לְךָ חָבֵר, וֶהֱוֵי דָן אֶת כָּל הָאָדָם לְכַף זְכוּת.'},
   {r:'אבות א׳:ז׳',s:'הרחק מחבר רע',t:'נִתַּאי הָאַרְבֵּלִי אוֹמֵר: הַרְחֵק מִשָּׁכֵן רָע, וְאַל תִּתְחַבֵּר לָרָשָׁע, וְאַל תִּתְיָאֵשׁ מִן הַפֻּרְעָנוּת.'},
   {r:'אבות א׳:י״ב',s:'הוי מתלמידיו של אהרן',t:'הִלֵּל אוֹמֵר: הֱוֵי מִתַּלְמִידָיו שֶׁל אַהֲרֹן, אוֹהֵב שָׁלוֹם וְרוֹדֵף שָׁלוֹם, אוֹהֵב אֶת הַבְּרִיּוֹת וּמְקָרְבָן לַתּוֹרָה.'},
@@ -502,10 +507,10 @@ const MISHNA_SETS=[
   {title:'פרקי אבות ב׳–ג׳',idx:[10,11,12,13,14],
    q:'מה אמר בן זומא: "איזהו חכם?"',
    a:['הלומד מכל אדם','הלומד מרבו בלבד','היודע כל התורה','המקיים את כל המצוות'],c:0,timer:30},
-  {title:'פרקי אבות ד׳ – חלק א׳',idx:[15,16,17,18,19],
-   q:'מה גוררת מצווה לפי בן עזאי?',
-   a:['מצווה גוררת מצווה','מצווה גוררת ברכה','מצווה גוררת פרס','מצווה גוררת עושר'],c:0,timer:30},
-  {title:'פרקי אבות ה׳–ו׳',idx:[20,21,22,0,1],
+  {title:'פרקי אבות ד׳',idx:[15,16,17,18,19],
+   q:'מה אמר רבי שמעון שיפה יותר מכל חיי העולם הבא?',
+   a:['שעה אחת בתשובה ומעשים טובים בעולם הזה','עושר וכבוד','כתר תורה','חיים ארוכים'],c:0,timer:30},
+  {title:'פרקי אבות ה׳–ו׳',idx:[20,21,22,23,24],
    q:'לפי פרקי אבות, בן כמה שנים ללמידת משנה?',
    a:['בן עשר','בן חמש','בן שלוש עשרה','בן שמונה'],c:0,timer:30},
 ];
@@ -675,6 +680,20 @@ english:[
   {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Enormous"</span><br><br>משפט לדוגמה: <i>"The whale is enormous."</i>',q:'What does "enormous" mean?',a:['עצום / ענקי','קטן','יפה','מהיר'],c:0,timer:30},
   {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Challenge"</span><br><br>משפט לדוגמה: <i>"Every challenge makes you stronger."</i>',q:'What does "challenge" mean?',a:['אתגר','חבר','עזרה','שאלה'],c:0,timer:30},
   {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Persevere"</span><br><br>משפט לדוגמה: <i>"Persevere and you will succeed."</i>',q:'What does "persevere" mean?',a:['להתמיד / להמשיך','לוותר','לנוח','לשכוח'],c:0,timer:30},
+  {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Honest"</span><br><br>משפט לדוגמה: <i>"Always be honest with your friends."</i>',q:'What does "honest" mean?',a:['ישר / דובר אמת','שקרן','כועס','עייף'],c:0,timer:30},
+  {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Improve"</span><br><br>משפט לדוגמה: <i>"Practice helps you improve."</i>',q:'What does "improve" mean?',a:['להשתפר','לאבד','לרוץ','לדבר'],c:0,timer:30},
+  {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Wisdom"</span><br><br>משפט לדוגמה: <i>"The old man spoke with wisdom."</i>',q:'What does "wisdom" mean?',a:['חוכמה','כוח','מהירות','עושר'],c:0,timer:30},
+  {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Stubborn"</span><br><br>משפט לדוגמה: <i>"He is too stubborn to change his mind."</i>',q:'What does "stubborn" mean?',a:['עקשן','חכם','עצוב','מהיר'],c:0,timer:30},
+  {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Astonish"</span><br><br>משפט לדוגמה: <i>"The magic trick astonished everyone."</i>',q:'What does "astonish" mean?',a:['להפתיע מאוד','להרגיע','להעציב','לשכוח'],c:0,timer:30},
+  {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Loyal"</span><br><br>משפט לדוגמה: <i>"A dog is a loyal friend."</i>',q:'What does "loyal" mean?',a:['נאמן','בוגדני','עצבני','מפוחד'],c:0,timer:30},
+  {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Diligent"</span><br><br>משפט לדוגמה: <i>"A diligent student always finishes homework."</i>',q:'What does "diligent" mean?',a:['חרוץ / שקדן','עצלן','כועס','עייף'],c:0,timer:30},
+  {title:'מילה באנגלית',tx:'<b>Word of the day:</b><br><span style="font-size:26px;font-weight:900;color:var(--gold)">"Furious"</span><br><br>משפט לדוגמה: <i>"She was furious when she lost the game."</i>',q:'What does "furious" mean?',a:['זועם מאוד','שמח','עייף','עצוב'],c:0,timer:30},
+  {title:'דקדוק אנגלי',tx:'<b>Grammar tip — Past Tense:</b><br><br>פעלים רגילים מקבלים <span style="color:var(--gold);font-weight:900">-ed</span> בעבר:<br>play → play<b>ed</b><br>watch → watch<b>ed</b><br><br>אבל יש פעלים לא רגילים: go → <b>went</b>, eat → <b>ate</b>',q:'מה צורת העבר של "go"?',a:['went','goed','gone','going'],c:0,timer:30},
+  {title:'דקדוק אנגלי',tx:'<b>Grammar tip — Plurals:</b><br><br>רוב המילים מקבלות <span style="color:var(--gold);font-weight:900">-s</span> ברבים:<br>cat → cat<b>s</b><br><br>מילים שמסתיימות ב-y/s/ch/sh מקבלות <span style="color:var(--gold);font-weight:900">-es</span>:<br>box → box<b>es</b>',q:'מה הרבים של "box"?',a:['boxes','boxs','boxies','box'],c:0,timer:30},
+  {title:'דקדוק אנגלי',tx:'<b>Grammar tip — Prepositions of place:</b><br><br>• <b>in</b> = בתוך (in the box)<br>• <b>on</b> = על (on the table)<br>• <b>under</b> = מתחת (under the bed)',q:'איזו מילת יחס מתאימה ל-"the cat is ___ the table" (מתחת לשולחן)?',a:['under','in','on','at'],c:0,timer:30},
+  {title:'דקדוק אנגלי',tx:'<b>Grammar tip — Comparatives:</b><br><br>תארים קצרים מקבלים <span style="color:var(--gold);font-weight:900">-er</span>:<br>tall → tall<b>er</b><br>fast → fast<b>er</b><br><br>תארים ארוכים: more + תואר:<br>more beautiful',q:'מה צורת ההשוואה של "tall"?',a:['taller','more tall','tallest','tallier'],c:0,timer:30},
+  {title:'ביטוי באנגלית',tx:'<b>Idiom of the day:</b><br><br><span style="font-size:20px;font-weight:900;color:var(--gold)">"Break the ice"</span><br><br>משמעות: להתחיל שיחה בצורה נינוחה עם מישהו שלא מכירים.',q:'מה המשמעות של "break the ice"?',a:['להתחיל שיחה ולהינות בנעימות','לשבור משהו','לקפוא מקור','לנצח במשחק'],c:0,timer:30},
+  {title:'ביטוי באנגלית',tx:'<b>Idiom of the day:</b><br><br><span style="font-size:20px;font-weight:900;color:var(--gold)">"Piece of cake"</span><br><br>משמעות: משהו קל מאוד לעשות.',q:'מה המשמעות של "piece of cake"?',a:['משהו קל מאוד','עוגה טעימה','משהו קשה','ארוחה'],c:0,timer:30},
 ],
 hebrew:[
   {title:'עברית יומית',tx:'<b>בניין הפועל:</b><br><br>השורש <span style="font-size:22px;font-weight:900;color:var(--gold)">כ.ת.ב</span> – "לכתוב"<br><br>• בניין <b>קל</b>: כָּתַב (פעל פשוט)<br>• בניין <b>פיעל</b>: כִּתֵּב (הכתיב לאחרים)<br>• בניין <b>נפעל</b>: נִכְתַּב (נכתב על ידי אחר)',q:'בניין "קל" מבטא:',a:['פעולה פשוטה שהאדם עושה','פעולה שנעשית לאדם','פעולה שגורמים לאחר לעשות','פעולה הדדית'],c:0,timer:30},
@@ -834,8 +853,8 @@ function cur(){return localStorage.getItem('ak_current')||''}
 function setCur(u){localStorage.setItem('ak_current',u)}
 function getUD(un){return getUsers()[un]||null}
 function saveUD(un,d){const u=getUsers();u[un]=d;saveUsers(u);fbSyncUser(un,d);}
-function todayKey(){return new Date().toISOString().slice(0,10)}
-function getDD(un){const u=getUD(un);if(!u)return{checked:{},bonusDone:false};if(!u.days)u.days={};if(!u.days[todayKey()])u.days[todayKey()]={checked:{},bonusDone:false};return u.days[todayKey()];}
+function todayKey(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function getDD(un){const u=getUD(un);if(!u)return{checked:{},bonusDone:false};if(!u.days)u.days={};if(!u.days[todayKey()])u.days[todayKey()]={checked:{},bonusDone:false};if(!u.days[todayKey()].checked)u.days[todayKey()].checked={};return u.days[todayKey()];}
 function saveDD(un,dd){const u=getUD(un);if(!u)return;if(!u.days)u.days={};u.days[todayKey()]=dd;saveUD(un,u);}
 
 // ============================================================
@@ -868,7 +887,28 @@ function doRegister(){
   }catch(err){e.textContent='שגיאה: '+err.message;}
 }
 // doLogout defined in admin section below
-function enterApp(){document.getElementById('authScreen').classList.remove('active');document.getElementById('mainScreen').classList.add('active');showPage('home');}
+function enterApp(){document.getElementById('authScreen').classList.remove('active');document.getElementById('mainScreen').classList.add('active');showPage('home');syncAnnouncement();}
+async function syncAnnouncement(){
+  const remote=await fbGet('ak_announcement');
+  if(remote&&(remote.text||remote.img))localStorage.setItem('ak_announcement',JSON.stringify(remote));
+  else if(remote===null)localStorage.removeItem('ak_announcement');
+  renderAnnounceBanner();
+}
+function renderAnnounceBanner(){
+  const el=document.getElementById('announceBanner');
+  if(!el)return;
+  const a=getAnnouncement();
+  const un=cur();
+  const seenTs=Number(localStorage.getItem('ak_announce_seen_'+un)||0);
+  if(!a||(!a.text&&!a.img)||a.ts<=seenTs){el.innerHTML='';return;}
+  el.innerHTML=`<div style="background:linear-gradient(135deg,rgba(247,201,72,0.18),rgba(255,140,66,0.12));border:1.5px solid rgba(247,201,72,0.35);border-radius:14px;padding:13px 14px;margin-bottom:12px;position:relative;">
+    <div style="font-size:12px;font-weight:800;color:#f7c948;margin-bottom:4px;">📢 הודעה</div>
+    ${a.img?`<img src="${a.img}" style="max-width:100%;max-height:220px;border-radius:10px;margin-bottom:8px;display:block;">`:''}
+    ${a.text?`<div style="font-size:13px;white-space:pre-wrap;line-height:1.4;">${a.text.replace(/</g,'&lt;')}</div>`:''}
+    <button onclick="dismissAnnouncement(${a.ts})" style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:50%;border:none;background:rgba(255,255,255,0.12);color:#fff;font-size:13px;cursor:pointer;">✕</button>
+  </div>`;
+}
+function dismissAnnouncement(ts){localStorage.setItem('ak_announce_seen_'+cur(),ts);renderAnnounceBanner();}
 window.onload=function(){const c=cur();if(c==='__admin__')enterAdminMode();else if(c&&getUD(c))enterApp();};
 
 // ============================================================
@@ -887,6 +927,7 @@ function nextRank(p){for(let i=RANKS.length-1;i>=0;i--)if(p<RANKS[i].min)return 
 // ============================================================
 function renderHome(){
   const un=cur();const u=getUD(un);if(!u)return;
+  renderAnnounceBanner();
   document.getElementById('topAvatar').textContent=(u.name||'?')[0];
   document.getElementById('topName').textContent=u.name.split(' ')[0];
   const rk=getRank(u.totalPts||0);
@@ -1004,7 +1045,7 @@ function doBonus(){
   renderHome();
 }
 
-function updActiveDays(un,u){const k=todayKey();if(u.lastDay!==k){const y=new Date();y.setDate(y.getDate()-1);const yk=y.toISOString().slice(0,10);u.streak=u.lastDay===yk?(u.streak||0)+1:1;u.activeDays=(u.activeDays||0)+1;u.lastDay=k;}}
+function updActiveDays(un,u){const k=todayKey();if(u.lastDay!==k){const y=new Date();y.setDate(y.getDate()-1);const yk=`${y.getFullYear()}-${String(y.getMonth()+1).padStart(2,'0')}-${String(y.getDate()).padStart(2,'0')}`;u.streak=u.lastDay===yk?(u.streak||0)+1:1;u.activeDays=(u.activeDays||0)+1;u.lastDay=k;}}
 
 // ============================================================
 // LEARN MODAL – with 60s timer + one-time answer
@@ -1332,11 +1373,94 @@ function showAdminTab(tab){
   document.getElementById('atab1').classList.toggle('active',tab==='students');
   document.getElementById('atab2').classList.toggle('active',tab==='graphs');
   document.getElementById('atab3').classList.toggle('active',tab==='taskpts');
+  document.getElementById('atab4').classList.toggle('active',tab==='publish');
   document.getElementById('adminTabStudents').style.display=tab==='students'?'':'none';
   document.getElementById('adminTabGraphs').style.display=tab==='graphs'?'':'none';
   document.getElementById('adminTabTaskPts').style.display=tab==='taskpts'?'':'none';
+  document.getElementById('adminTabPublish').style.display=tab==='publish'?'':'none';
   if(tab==='graphs')renderAdminGraphs();
   if(tab==='taskpts')renderTaskPtsEditor();
+  if(tab==='publish')renderPublishTab();
+}
+
+// ── Publish announcement to students ──
+function getAnnouncement(){try{return JSON.parse(localStorage.getItem('ak_announcement')||'null');}catch{return null;}}
+function setAnnouncement(a){localStorage.setItem('ak_announcement',JSON.stringify(a));fbSet('ak_announcement',a);}
+let _pendingAnnImg=undefined; // undefined=no change, null=removed, string=new data URL
+function resizeImageFile(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=function(e){
+      const img=new Image();
+      img.onload=function(){
+        const maxW=900;
+        const scale=Math.min(1,maxW/img.width);
+        const canvas=document.createElement('canvas');
+        canvas.width=img.width*scale;
+        canvas.height=img.height*scale;
+        canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+        resolve(canvas.toDataURL('image/jpeg',0.75));
+      };
+      img.onerror=reject;
+      img.src=e.target.result;
+    };
+    reader.onerror=reject;
+    reader.readAsDataURL(file);
+  });
+}
+async function onAnnImgPicked(input){
+  const file=input.files&&input.files[0];
+  if(!file)return;
+  try{_pendingAnnImg=await resizeImageFile(file);}catch(e){_pendingAnnImg=undefined;}
+  renderPublishTab();
+}
+function removeAnnImg(){_pendingAnnImg=null;renderPublishTab();}
+async function publishAnnouncement(){
+  const txt=document.getElementById('annText').value.trim();
+  const prev=getAnnouncement();
+  let img;
+  if(_pendingAnnImg===null)img=undefined;
+  else if(_pendingAnnImg)img=_pendingAnnImg;
+  else img=prev&&prev.img;
+  if(!txt&&!img)return;
+  const a={text:txt,ts:Date.now()};
+  if(img)a.img=img;
+  setAnnouncement(a);
+  _pendingAnnImg=undefined;
+  renderPublishTab();
+}
+async function deleteAnnouncement(){
+  localStorage.removeItem('ak_announcement');
+  await fbSet('ak_announcement',null);
+  _pendingAnnImg=undefined;
+  renderPublishTab();
+}
+function renderPublishTab(){
+  const a=getAnnouncement();
+  const previewImg=_pendingAnnImg===null?null:(_pendingAnnImg||(a&&a.img));
+  let html=`
+    <div style="background:rgba(247,201,72,0.07);border:1px solid rgba(247,201,72,0.2);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:rgba(255,220,100,0.85);">
+      📢 <b>פרסום הודעה לתלמידים</b> — ההודעה (וטקסט ו/או תמונה) תופיע בראש המסך הבית של כל התלמידים
+    </div>
+    <textarea id="annText" placeholder="כתבו כאן את ההודעה לתלמידים..." style="width:100%;min-height:90px;padding:11px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.12);background:rgba(20,28,48,0.8);color:#fff;font-size:14px;font-family:inherit;resize:vertical;">${a?a.text.replace(/</g,'&lt;'):''}</textarea>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">
+      <label style="padding:9px 14px;border-radius:9px;border:1.5px solid rgba(247,201,72,0.3);background:rgba(247,201,72,0.08);color:#f7c948;font-size:13px;font-weight:700;cursor:pointer;">
+        🖼️ בחר תמונה לפרסום
+        <input type="file" accept="image/*" onchange="onAnnImgPicked(this)" style="display:none;">
+      </label>
+      ${previewImg?`<button onclick="removeAnnImg()" style="padding:9px 14px;border-radius:9px;border:1.5px solid rgba(255,107,107,0.3);background:rgba(255,107,107,0.08);color:#ff8080;font-size:13px;font-weight:700;cursor:pointer;">✕ הסר תמונה</button>`:''}
+    </div>
+    ${previewImg?`<img src="${previewImg}" style="margin-top:10px;max-width:100%;max-height:220px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);">`:''}
+    <button onclick="publishAnnouncement()" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#f7c948,#ff8c42);color:#1a0e02;font-size:14px;font-weight:800;cursor:pointer;margin-top:10px;">🚀 פרסם הודעה</button>`;
+  if(a&&(a.text||a.img)){
+    html+=`<div style="margin-top:14px;padding:12px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">הודעה פעילה כרגע · ${new Date(a.ts).toLocaleString('he-IL')}</div>
+      ${a.img?`<img src="${a.img}" style="max-width:100%;max-height:160px;border-radius:8px;margin-bottom:8px;">`:''}
+      ${a.text?`<div style="font-size:13px;white-space:pre-wrap;">${a.text.replace(/</g,'&lt;')}</div>`:''}
+      <button onclick="deleteAnnouncement()" style="margin-top:10px;padding:8px 14px;border-radius:8px;border:1.5px solid rgba(255,107,107,0.3);background:rgba(255,107,107,0.08);color:#ff8080;font-size:12px;font-weight:700;cursor:pointer;">🗑️ הסר הודעה</button>
+    </div>`;
+  }
+  document.getElementById('adminTabPublish').innerHTML=html;
 }
 
 // ── Task Points Editor ──
@@ -1439,6 +1563,7 @@ function collectStudents(){
     .filter(([un,u])=>un!=='__admin__'&&u&&u.name)
     .map(([un,u])=>{
       const dd=(u.days&&u.days[today])||{checked:{},bonusDone:false};
+      if(!dd.checked)dd.checked={};
       let doneTasks=0,todayPts=0,totalTasks=0;
       CATEGORIES.forEach(cat=>cat.tasks.forEach(t=>{totalTasks++;if(dd.checked[t.id]){doneTasks++;todayPts+=t.pts;}}));
       if(dd.bonusDone){doneTasks++;todayPts+=dailyBonus().pts;}totalTasks++;
@@ -1460,6 +1585,7 @@ async function enterAdminMode(){
         const local=getUsers();
         // מזג: Firebase גובר על לוקאל לגבי משתמשים מרוחקים
         Object.entries(fbUsers).forEach(([un,u])=>{
+          if(u&&u.todayData&&!u.todayData.checked)u.todayData.checked={};
           if(!local[un]&&u&&u.name){
             // משתמש רחוק — בנה מבנה מינימלי
             local[un]={name:u.name,cls:u.cls||'',pass:u.pass||'',
@@ -1514,6 +1640,36 @@ function adminCustomPts(un){
   renderAdmin();
 }
 
+function adminBackupData(){
+  const users=getUsers();
+  const backup={exportedAt:new Date().toISOString(),users};
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`alufei_kayitz_backup_${todayKey()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ קובץ הגיבוי הורד!','ok');
+}
+
+function adminResetToday(){
+  if(!confirm('איפוס כל המשימות של היום לכל המשתמשים?\nהנקודות הכוללות לא ישתנו.'))return;
+  const users=getUsers();
+  const k=todayKey();
+  Object.keys(users).forEach(un=>{
+    if(!users[un].days)users[un].days={};
+    users[un].days[k]={checked:{},bonusDone:false};
+  });
+  saveUsers(users);
+  // עדכן Firebase לכל משתמש
+  if(FB_URL){Object.entries(users).forEach(([un,u])=>fbSyncUser(un,u));}
+  showToast('✅ כל המשימות של היום אופסו!','ok');
+  renderAdmin();
+}
+
 function adminRemoveStudent(un, name){
   if(!confirm(`האם למחוק את ${name}?\nפעולה זו לא ניתנת לביטול.`))return;
   const users=getUsers();
@@ -1559,6 +1715,8 @@ function renderAdmin(){
       <div class="admin-stat"><div class="as-val">${activeToday}</div><div class="as-lbl">פעילים היום</div></div>
       <div class="admin-stat"><div class="as-val">${totalTasksToday}</div><div class="as-lbl">משימות היום</div></div>
     </div>
+    <button onclick="adminBackupData()" style="width:100%;padding:12px;border-radius:11px;border:1.5px solid rgba(107,255,184,0.4);background:rgba(107,255,184,0.1);color:#6bffb8;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;">💾 גיבוי כל הנתונים (הורדת קובץ)</button>
+    <button onclick="adminResetToday()" style="width:100%;padding:12px;border-radius:11px;border:1.5px solid rgba(255,107,107,0.4);background:rgba(255,107,107,0.1);color:#ff8080;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:12px;">🔄 איפוס כל משימות היום לכל התלמידים</button>
     <div class="admin-section-title">🏅 דירוג תלמידים</div>`;
 
   if(!students.length){
