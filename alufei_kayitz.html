@@ -220,7 +220,7 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
 @keyframes cflyout{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(--tx),var(--ty)) scale(0.2);opacity:0;}}
 
 /* ADMIN — always dark */
-#adminScreen{background:#0a0e1a !important;color:rgba(255,255,255,0.85) !important;}
+#adminScreen{background:#0a0e1a !important;color:rgba(255,255,255,0.85) !important;--muted:rgba(190,175,145,0.75);--gold:#f7c948;--green:#6bffb8;}
 #adminScreen *{color:inherit;}
 .admin-top{background:linear-gradient(135deg,#1a0a2e,#2a0a1a);border-bottom:1px solid rgba(255,107,107,0.2);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .admin-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#ff6b6b,#ff8c42);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;flex-shrink:0;}
@@ -340,7 +340,8 @@ body::before{content:'';position:fixed;top:0;left:0;width:100vw;height:100vh;bac
       <button class="btn btn-gold mt8" onclick="doRegister()">הצטרפות לאתגר! 🏆</button>
       <div class="err" id="regErr"></div>
     </div>
-    <div id="adminEntry" style="margin-top:14px;background:rgba(255,107,107,0.05);border:1px solid rgba(255,107,107,0.18);border-radius:12px;padding:13px;">
+    <div style="text-align:center;margin-top:16px;font-size:10px;color:rgba(180,150,80,0.65);letter-spacing:0.3px;">כל הזכויות שמורות לנתנאל הזה · רעיונות גדולים לעסקים קטנים</div>
+    <div id="adminEntry" style="margin-top:12px;background:rgba(255,107,107,0.05);border:1px solid rgba(255,107,107,0.18);border-radius:12px;padding:13px;">
       <div style="font-size:12px;color:rgba(255,150,150,0.8);font-weight:700;margin-bottom:8px;">🏫 כניסת מנהל / מורה</div>
       <input id="adminPassInput" type="password" placeholder="סיסמת מנהל" style="width:100%;padding:10px 12px;border-radius:9px;border:1.5px solid rgba(255,107,107,0.25);background:#000;color:#fff;font-size:14px;outline:none;font-family:inherit;direction:ltr;text-align:left;">
       <button onclick="doAdminLogin()" style="width:100%;margin-top:8px;padding:10px;border-radius:9px;border:none;background:linear-gradient(90deg,#ff6b6b,#ff8c42);color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;">כניסה 🔐</button>
