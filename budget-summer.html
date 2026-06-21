@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>קופה משותפת — חופש גדול 2026</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --card: #273548;
+    --border: #334155;
+    --accent: #6366f1;
+    --accent2: #8b5cf6;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --radius: 14px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Login ─────────────────────────────────────────── */
+  #login-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  #login-screen h1 {
+    font-size: 2rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+  }
+
+  #login-screen p {
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .login-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 480px;
+  }
+
+  .member-btn {
+    padding: 12px 24px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    color: var(--text);
+    border-radius: 50px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .member-btn:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+  }
+
+  .add-member-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  input, select, textarea {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 1rem;
+    width: 100%;
+    outline: none;
+    transition: border-color .2s;
+    font-family: inherit;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+
+  button.primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity .2s;
+  }
+  button.primary:hover { opacity: .88; }
+
+  button.secondary {
+    background: var(--card);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  button.secondary:hover { border-color: var(--accent); }
+
+  /* ── App shell ──────────────────────────────────────── */
+  #app { display: none; }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  header h2 { font-size: 1.1rem; }
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: .9rem;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: .85rem;
+    flex-shrink: 0;
+  }
+
+  /* ── Tabs ───────────────────────────────────────────── */
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 14px 8px;
+    text-align: center;
+    cursor: pointer;
+    font-size: .95rem;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: all .2s;
+    white-space: nowrap;
+    min-width: 80px;
+  }
+  .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
+  .page { display: none; padding: 20px; max-width: 640px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* ── Cards ──────────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: .8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 8px;
+  }
+
+  .big-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+  }
+
+  /* ── Add expense form ───────────────────────────────── */
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: .9rem; color: var(--muted); margin-bottom: 6px; display: block; }
+
+  .amount-row { display: flex; gap: 10px; }
+  .amount-row input { font-size: 1.4rem; font-weight: 700; }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .cat-btn {
+    padding: 10px 8px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    font-size: .88rem;
+    transition: all .2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .cat-btn span.icon { font-size: 1.4rem; }
+  .cat-btn:hover, .cat-btn.selected {
+    border-color: var(--accent);
+    background: rgba(99,102,241,.15);
+  }
+
+  /* ── Expense list ───────────────────────────────────── */
+  .expense-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .expense-item:last-child { border-bottom: none; }
+
+  .cat-icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .expense-info { flex: 1; }
+  .expense-desc { font-size: .95rem; }
+  .expense-meta { font-size: .8rem; color: var(--muted); margin-top: 2px; }
+  .expense-amount { font-weight: 700; font-size: 1.05rem; color: var(--red); white-space: nowrap; }
+
+  .delete-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: color .2s;
+  }
+  .delete-btn:hover { color: var(--red); }
+
+  /* ── Summary bars ───────────────────────────────────── */
+  .summary-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .summary-label { width: 80px; font-size: .88rem; flex-shrink: 0; }
+  .bar-track {
+    flex: 1;
+    height: 10px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width .4s ease;
+  }
+  .summary-val { font-size: .88rem; font-weight: 600; width: 60px; text-align: left; }
+
+  /* ── Person summary ─────────────────────────────────── */
+  .person-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    background: var(--surface);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+  }
+  .person-card .avatar { width: 40px; height: 40px; font-size: 1rem; }
+  .person-info { flex: 1; }
+  .person-name { font-weight: 600; }
+  .person-count { font-size: .8rem; color: var(--muted); }
+  .person-amount { font-weight: 700; font-size: 1.1rem; }
+
+  /* ── Budget goal ────────────────────────────────────── */
+  .budget-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .budget-bar { margin-bottom: 16px; }
+  .budget-bar .bar-track { height: 14px; }
+
+  .safe { color: var(--green); }
+  .warning { color: var(--yellow); }
+  .danger { color: var(--red); }
+
+  /* ── Empty state ────────────────────────────────────── */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+  .empty .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+
+  /* ── Toast ──────────────────────────────────────────── */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--green);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: transform .3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  .section-header {
+    font-size: .8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin: 20px 0 10px;
+  }
+
+  .top-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 400px) {
+    .category-grid { grid-template-columns: repeat(2, 1fr); }
+    .top-summary-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ LOGIN ═══════════════════ -->
+<div id="login-screen">
+  <div style="font-size:3rem">☀️</div>
+  <h1>קופה משותפת<br>חופש גדול 2026</h1>
+  <p>מי אתה?</p>
+
+  <div class="login-members" id="members-list"></div>
+
+  <div class="add-member-row">
+    <input type="text" id="new-member-input" placeholder="הוסף שם חדש..." maxlength="20">
+    <button class="primary" onclick="addMember()">הוסף</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ APP ═══════════════════ -->
+<div id="app">
+  <header>
+    <h2>☀️ קופה משותפת</h2>
+    <div class="user-chip">
+      <div class="avatar" id="header-avatar"></div>
+      <span id="header-name"></span>
+      <button onclick="logout()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:0 0 0 4px;" title="החלף משתמש">↩</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('dashboard')">📊 סיכום</div>
+    <div class="tab" onclick="showTab('add')">➕ הוצאה</div>
+    <div class="tab" onclick="showTab('history')">📋 היסטוריה</div>
+    <div class="tab" onclick="showTab('budget')">🎯 תקציב</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page active">
+    <div class="top-summary-grid">
+      <div class="card">
+        <div class="card-title">סה"כ הוצאות</div>
+        <div class="big-number" id="dash-total">₪0</div>
+      </div>
+      <div class="card">
+        <div class="card-title">ההוצאות שלי</div>
+        <div class="big-number" id="dash-mine">₪0</div>
+      </div>
+    </div>
+
+    <div class="section-header">לפי קטגוריה</div>
+    <div class="card" id="dash-categories"></div>
+
+    <div class="section-header">לפי אדם</div>
+    <div id="dash-people"></div>
+  </div>
+
+  <!-- ADD EXPENSE -->
+  <div id="page-add" class="page">
+    <div class="form-group">
+      <label class="form-label">סכום (₪)</label>
+      <div class="amount-row">
+        <input type="number" id="exp-amount" placeholder="0" min="0" step="0.01">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">קטגוריה</label>
+      <div class="category-grid" id="category-grid"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">תיאור (אופציונלי)</label>
+      <input type="text" id="exp-desc" placeholder="מה קנית?">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">מי שילם?</label>
+      <select id="exp-payer"></select>
+    </div>
+
+    <button class="primary" style="width:100%;padding:14px;font-size:1.1rem;margin-top:8px;" onclick="addExpense()">
+      ✓ הוסף הוצאה
+    </button>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="page-history" class="page">
+    <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center;">
+      <select id="filter-cat" onchange="renderHistory()" style="flex:1">
+        <option value="">כל הקטגוריות</option>
+      </select>
+      <select id="filter-person" onchange="renderHistory()" style="flex:1">
+        <option value="">כולם</option>
+      </select>
+    </div>
+    <div id="history-list"></div>
+  </div>
+
+  <!-- BUDGET -->
+  <div id="page-budget" class="page">
+    <div class="card">
+      <div class="card-title">תקציב כולל לחופש</div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <input type="number" id="budget-input" placeholder="הכנס תקציב..." min="0">
+        <button class="primary" onclick="saveBudget()">שמור</button>
+      </div>
+    </div>
+    <div class="card" id="budget-status-card" style="display:none">
+      <div class="budget-status">
+        <span class="card-title" style="margin-bottom:0">שימוש בתקציב</span>
+        <span id="budget-pct-text"></span>
+      </div>
+      <div class="budget-bar">
+        <div class="bar-track"><div class="bar-fill" id="budget-bar-fill"></div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted)">
+        <span>הוצאנו: <strong id="budget-spent" style="color:var(--text)"></strong></span>
+        <span>נותר: <strong id="budget-left" style="color:var(--text)"></strong></span>
+      </div>
+    </div>
+
+    <div class="section-header">תקציב לפי קטגוריה</div>
+    <div id="cat-budgets"></div>
+  </div>
+</div>
+
+<div id="toast">✓ נשמר בהצלחה</div>
+
+<script>
+// ══════════════════════════════════════════
+//  Data
+// ══════════════════════════════════════════
+const CATEGORIES = [
+  { id: 'food',    label: 'אוכל',      icon: '🍕' },
+  { id: 'fun',     label: 'בילויים',   icon: '🎢' },
+  { id: 'shop',    label: 'קניות',     icon: '🛍️' },
+  { id: 'travel',  label: 'תחבורה',    icon: '🚗' },
+  { id: 'beach',   label: 'חוף / בריכה', icon: '🏊' },
+  { id: 'sweets',  label: 'ממתקים',    icon: '🍦' },
+  { id: 'sport',   label: 'ספורט',     icon: '⚽' },
+  { id: 'movies',  label: 'קולנוע',    icon: '🎬' },
+  { id: 'other',   label: 'אחר',       icon: '📦' },
+];
+
+const COLORS = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#22c55e','#14b8a6','#f97316','#3b82f6','#e11d48'];
+
+function load(key, def) {
+  try { return JSON.parse(localStorage.getItem(key)) ?? def; } catch { return def; }
+}
+function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+let members = load('members', ['יוני', 'שי', 'תמר']);
+let expenses = load('expenses', []);
+let budget = load('budget', 0);
+let catBudgets = load('catBudgets', {});
+let currentUser = null;
+let selectedCat = null;
+
+// ══════════════════════════════════════════
+//  Avatar color
+// ══════════════════════════════════════════
+function colorFor(name) {
+  let h = 0;
+  for (let c of name) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+  return COLORS[h % COLORS.length];
+}
+
+function makeAvatar(name, size = 28) {
+  const col = colorFor(name);
+  return `<div class="avatar" style="background:${col};font-size:${size*.5}px;width:${size}px;height:${size}px">${name[0]}</div>`;
+}
+
+// ══════════════════════════════════════════
+//  Login
+// ══════════════════════════════════════════
+function renderLogin() {
+  const list = document.getElementById('members-list');
+  list.innerHTML = members.map(m => `
+    <button class="member-btn" onclick="login('${m}')">
+      ${makeAvatar(m)} ${m}
+    </button>`).join('');
+  document.getElementById('new-member-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addMember();
+  });
+}
+
+function addMember() {
+  const inp = document.getElementById('new-member-input');
+  const name = inp.value.trim();
+  if (!name) return;
+  if (members.includes(name)) { showToast('השם כבר קיים'); return; }
+  members.push(name);
+  save('members', members);
+  inp.value = '';
+  renderLogin();
+}
+
+function login(name) {
+  currentUser = name;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('header-name').textContent = name;
+  document.getElementById('header-avatar').textContent = name[0];
+  document.getElementById('header-avatar').style.background = colorFor(name);
+  initApp();
+}
+
+function logout() {
+  currentUser = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  renderLogin();
+}
+
+// ══════════════════════════════════════════
+//  App init
+// ══════════════════════════════════════════
+function initApp() {
+  // Build category grid
+  const grid = document.getElementById('category-grid');
+  grid.innerHTML = CATEGORIES.map(c => `
+    <button class="cat-btn" id="cat-${c.id}" onclick="selectCat('${c.id}')">
+      <span class="icon">${c.icon}</span>${c.label}
+    </button>`).join('');
+
+  // Payer select
+  const payer = document.getElementById('exp-payer');
+  payer.innerHTML = members.map(m =>
+    `<option value="${m}" ${m===currentUser?'selected':''}>${m}</option>`).join('');
+
+  // Filter dropdowns
+  const fc = document.getElementById('filter-cat');
+  fc.innerHTML = '<option value="">כל הקטגוריות</option>' +
+    CATEGORIES.map(c => `<option value="${c.id}">${c.icon} ${c.label}</option>`).join('');
+
+  const fp = document.getElementById('filter-person');
+  fp.innerHTML = '<option value="">כולם</option>' +
+    members.map(m => `<option value="${m}">${m}</option>`).join('');
+
+  // Budget input
+  if (budget) document.getElementById('budget-input').value = budget;
+
+  renderDashboard();
+  renderCatBudgets();
+  renderHistory();
+}
+
+// ══════════════════════════════════════════
+//  Tab navigation
+// ══════════════════════════════════════════
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['dashboard','add','history','budget'][i] === id);
+  });
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'history') renderHistory();
+  if (id === 'budget') renderBudgetPage();
+}
+
+// ══════════════════════════════════════════
+//  Add expense
+// ══════════════════════════════════════════
+function selectCat(id) {
+  selectedCat = id;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('cat-'+id).classList.add('selected');
+}
+
+function addExpense() {
+  const amount = parseFloat(document.getElementById('exp-amount').value);
+  if (!amount || amount <= 0) { alert('אנא הכנס סכום תקין'); return; }
+  if (!selectedCat) { alert('אנא בחר קטגוריה'); return; }
+
+  const desc = document.getElementById('exp-desc').value.trim();
+  const payer = document.getElementById('exp-payer').value;
+
+  expenses.push({
+    id: Date.now(),
+    amount,
+    cat: selectedCat,
+    desc: desc || catById(selectedCat).label,
+    payer,
+    date: new Date().toLocaleDateString('he-IL'),
+    time: new Date().toLocaleTimeString('he-IL', {hour:'2-digit',minute:'2-digit'}),
+  });
+  save('expenses', expenses);
+
+  // reset
+  document.getElementById('exp-amount').value = '';
+  document.getElementById('exp-desc').value = '';
+  selectedCat = null;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+
+  showToast('ההוצאה נוספה! 🎉');
+  showTab('dashboard');
+}
+
+function catById(id) { return CATEGORIES.find(c => c.id === id) || {label:id, icon:'📦'}; }
+
+// ══════════════════════════════════════════
+//  Dashboard
+// ══════════════════════════════════════════
+function renderDashboard() {
+  const total = expenses.reduce((s,e) => s+e.amount, 0);
+  const mine = expenses.filter(e => e.payer === currentUser).reduce((s,e) => s+e.amount, 0);
+
+  document.getElementById('dash-total').textContent = '₪' + fmt(total);
+  document.getElementById('dash-mine').textContent = '₪' + fmt(mine);
+
+  // By category
+  const byCat = {};
+  expenses.forEach(e => { byCat[e.cat] = (byCat[e.cat]||0) + e.amount; });
+  const sortedCats = Object.entries(byCat).sort((a,b) => b[1]-a[1]);
+  const maxCat = sortedCats[0]?.[1] || 1;
+
+  const catDiv = document.getElementById('dash-categories');
+  if (!sortedCats.length) {
+    catDiv.innerHTML = '<div class="empty"><div class="empty-icon">🛒</div><div>עוד אין הוצאות</div></div>';
+  } else {
+    catDiv.innerHTML = sortedCats.map(([id, amt]) => {
+      const c = catById(id);
+      return `<div class="summary-row">
+        <div class="summary-label">${c.icon} ${c.label}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(amt/maxCat*100).toFixed(1)}%"></div></div>
+        <div class="summary-val">₪${fmt(amt)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // By person
+  const byPerson = {};
+  expenses.forEach(e => { byPerson[e.payer] = (byPerson[e.payer]||0) + e.amount; });
+  const peopleDiv = document.getElementById('dash-people');
+  const sorted = Object.entries(byPerson).sort((a,b) => b[1]-a[1]);
+  peopleDiv.innerHTML = sorted.map(([name, amt]) => {
+    const cnt = expenses.filter(e => e.payer === name).length;
+    return `<div class="person-card">
+      ${makeAvatar(name, 40)}
+      <div class="person-info">
+        <div class="person-name">${name}</div>
+        <div class="person-count">${cnt} הוצאות</div>
+      </div>
+      <div class="person-amount" style="color:var(--red)">₪${fmt(amt)}</div>
+    </div>`;
+  }).join('') || '<div class="empty"><div class="empty-icon">👥</div><div>עוד אין נתונים</div></div>';
+}
+
+// ══════════════════════════════════════════
+//  History
+// ══════════════════════════════════════════
+function renderHistory() {
+  const catFilter = document.getElementById('filter-cat').value;
+  const personFilter = document.getElementById('filter-person').value;
+
+  let filtered = [...expenses].reverse();
+  if (catFilter) filtered = filtered.filter(e => e.cat === catFilter);
+  if (personFilter) filtered = filtered.filter(e => e.payer === personFilter);
+
+  const list = document.getElementById('history-list');
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div>אין הוצאות להצגה</div></div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(e => {
+    const c = catById(e.cat);
+    return `<div class="expense-item">
+      <div class="cat-icon-circle" style="background:${colorFor(e.cat)}22">${c.icon}</div>
+      <div class="expense-info">
+        <div class="expense-desc">${e.desc}</div>
+        <div class="expense-meta">${makeAvatar(e.payer)} ${e.payer} • ${e.date} ${e.time}</div>
+      </div>
+      <div class="expense-amount">-₪${fmt(e.amount)}</div>
+      <button class="delete-btn" onclick="deleteExpense(${e.id})" title="מחק">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteExpense(id) {
+  if (!confirm('למחוק את ההוצאה?')) return;
+  expenses = expenses.filter(e => e.id !== id);
+  save('expenses', expenses);
+  renderHistory();
+  renderDashboard();
+  showToast('נמחק');
+}
+
+// ══════════════════════════════════════════
+//  Budget
+// ══════════════════════════════════════════
+function saveBudget() {
+  budget = parseFloat(document.getElementById('budget-input').value) || 0;
+  save('budget', budget);
+  renderBudgetPage();
+  showToast('תקציב נשמר ✓');
+}
+
+function renderBudgetPage() {
+  if (budget > 0) {
+    document.getElementById('budget-status-card').style.display = 'block';
+    const spent = expenses.reduce((s,e) => s+e.amount, 0);
+    const pct = Math.min(spent/budget*100, 100);
+    const left = budget - spent;
+
+    document.getElementById('budget-spent').textContent = '₪' + fmt(spent);
+    document.getElementById('budget-left').textContent = '₪' + fmt(Math.max(left,0));
+    document.getElementById('budget-pct-text').textContent = pct.toFixed(1) + '%';
+
+    const fill = document.getElementById('budget-bar-fill');
+    fill.style.width = pct + '%';
+    fill.style.background = pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--yellow)' : 'linear-gradient(90deg,var(--accent),var(--accent2))';
+  }
+  renderCatBudgets();
+}
+
+function renderCatBudgets() {
+  const div = document.getElementById('cat-budgets');
+  div.innerHTML = CATEGORIES.map(c => {
+    const spent = expenses.filter(e=>e.cat===c.id).reduce((s,e)=>s+e.amount,0);
+    const cb = catBudgets[c.id] || 0;
+    const pct = cb ? Math.min(spent/cb*100,100) : 0;
+    return `<div class="card" style="padding:14px 18px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span>${c.icon} ${c.label}</span>
+        <span style="font-size:.85rem;color:var(--muted)">₪${fmt(spent)} /
+          <input type="number" value="${cb||''}" placeholder="תקציב"
+            style="width:70px;padding:2px 6px;font-size:.85rem;display:inline-block"
+            onchange="saveCatBudget('${c.id}',this.value)" min="0">
+        </span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${pct>90?'var(--red)':pct>70?'var(--yellow)':''}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function saveCatBudget(catId, val) {
+  catBudgets[catId] = parseFloat(val) || 0;
+  save('catBudgets', catBudgets);
+}
+
+// ══════════════════════════════════════════
+//  Utils
+// ══════════════════════════════════════════
+function fmt(n) {
+  return n % 1 === 0 ? n.toLocaleString() : n.toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function showToast(msg = 'נשמר ✓') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ══════════════════════════════════════════
+//  Boot
+// ══════════════════════════════════════════
+renderLogin();
+</script>
+</body>
+</html>
